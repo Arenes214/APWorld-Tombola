@@ -18,3 +18,10 @@ def all_items_to_id():
         the_list[key] = item[0]
 
     return the_list
+
+def all_default_classifications():
+    classifications = {}
+
+    for item in itemlist.numbers: # Numbers
+        key = itemlist.combine_number_name(item[0],item[1])
+        classifications[key] = ItemClassification.progression
