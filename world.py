@@ -3,7 +3,7 @@ from typing import Any
 
 from worlds.AutoWorld import World
 
-from . import items, locations, options, regions, rules, web_world
+from . import items, locations, options, regions, rules
 
 class APTombolaWorld(World):
     """
@@ -12,7 +12,6 @@ class APTombolaWorld(World):
 
     game = "AP Tombola"
 
-    web = web_world.APTombolaWebWorld()
 
     options_dataclass = options.APTombolaOptions
     options: options.APTombolaOptions
