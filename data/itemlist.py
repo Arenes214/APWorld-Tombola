@@ -90,3 +90,8 @@ numbers = [
     [89, "Old Woman"],
     [90, "Fear"],
 ]
+
+
+
+def combine_number_name(number, name):
+    return f"{number} - {name}"
