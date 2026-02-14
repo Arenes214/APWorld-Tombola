@@ -36,8 +36,8 @@ numbers = [
     [35, "Bird"],
     [36, "Castanets"],
     [37, "Monk"],
-    [38, "A beating"], # WIP
-    [39, "Hanging in there"]
+    [38, "A beating"],
+    [39, "Hanging in there"],
     [40, "Boredom"],
     [41, "Knife"],
     [42, "Coffee"],
@@ -95,5 +95,5 @@ def combine_number_name(number, name):
     return f"{number} - {name}"
 
 fillers = [
-    [1001, "Orange Peel"]
+    [1001, "Orange Peel"],
 ]

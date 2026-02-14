@@ -24,7 +24,7 @@ def create_all_regions(world: APTombolaWorld) -> None:
     world.multiworld.regions += regions
 
 
-def connect_regions(world. APTombolaWorld) -> None:
+def connect_regions(world: APTombolaWorld) -> None:
     start_region = world.get_region("The Table")
 
     for i in range (6):
