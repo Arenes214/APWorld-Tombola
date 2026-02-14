@@ -55,7 +55,8 @@ def create_all_items(world: APTombolaWorld) -> None:
     itempool: list[Item] = []
 
     for item in itemlist.numbers:
-        world.create_item(itemlist.combine_number_name(item[0],item[1]))
+        to_pool = world.create_item(itemlist.combine_number_name(item[0],item[1]))
+        itempool.append(to_pool)
 
     # TODO filler and other stuff planned
 
