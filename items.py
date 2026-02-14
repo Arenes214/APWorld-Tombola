@@ -46,7 +46,20 @@ class APTombolaItem(Item):
 def get_random_filler_item_name(world: APTombolaWorld) -> str:
     return "Orange Peel" # TODO actually give a random filler, so far only one exists so it's ok to hardcode it
 
+def create_item_with_correct_classification(world: APTombolaWorld, name: str) -> APTombolaItem:
+    classification = DEFAULT_ITEM_CLASSIFICATIONS[name]
 
+    return APTombolaItem(name, classification, ITEM_NAME_TO_ID[name], world.player)
+
+def create_all_items(world: APTombolaWorld) -> None:
+    itempool: list[Item] = []
+
+    for item in itemlist.numbers:
+        world.create_item(itemlist.combine_number_name(item[0],item[1]))
+
+    # TODO filler and other stuff planned
+
+    world.multiworld.itempool += itempool
 
 
 
