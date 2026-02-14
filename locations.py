@@ -151,7 +151,7 @@ def create_regular_locations(world: APTombolaWorld) -> None:
         regions.append(world.get_region(f"Card {i}"))
 
 
-    for key, value in the_list.items():
+    for key, value in LOCATION_NAME_TO_ID.items():
         # TODO When options can change the amount there will need to be some logic here
         # For now just create all of them
         if value >= 10000: # Check for the range of ids that are Card locations

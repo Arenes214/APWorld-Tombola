@@ -24,9 +24,9 @@ class APTombolaWorld(World):
     def create_regions(self) -> None:
         regions.create_and_connect_regions(self)
         locations.create_all_locations(self)
-
-    def set_rules(self) -> None:
-        rules.set_all_rules(self)
+# TODO UNDO THE COMMENT, THIS IS FOR TEST ONLY
+    #def set_rules(self) -> None:
+        #rules.set_all_rules(self)
 
     def create_items(self) -> None:
         items.create_all_items(self)
