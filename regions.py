@@ -13,9 +13,13 @@ def create_and_connect_regions(world: APTombolaWorld) -> None:
 
 def create_all_regions(world: APTombolaWorld) -> None:
     regions = []
+    start_region = Region("The Table", world.player, world.multiworld)
+    regions.append(start_region)
 
     for i in range (6):
         reg = Region(f"Card {i}", world.player, world.multiworld)
         regions.append(reg)
 
     world.multiworld.regions += regions
+
+
