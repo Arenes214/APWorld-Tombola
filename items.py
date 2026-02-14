@@ -38,3 +38,7 @@ class APTombolaItem(Item):
     game = "AP Tombola"
 
 
+def get_random_filler_item_name(world: APTombolaWorld) -> str:
+    return "Orange Peel" # TODO actually give a random filler, so far only one exists so it's ok to hardcode it
+
+
