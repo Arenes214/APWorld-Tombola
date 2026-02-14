@@ -33,3 +33,8 @@ def all_default_classifications():
         classifications[item[1]] = ItemClassification.filler
 
     return classifications
+
+class APTombolaItem(Item):
+    game = "AP Tombola"
+
+
