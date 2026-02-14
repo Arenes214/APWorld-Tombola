@@ -34,11 +34,20 @@ def all_default_classifications():
 
     return classifications
 
+# Create the lists with ids and classifications to mimic APQuest behaviour
+ITEM_NAME_TO_ID = all_items_to_id()
+DEFAULT_ITEM_CLASSIFICATIONS = all_default_classifications()
+
+
 class APTombolaItem(Item):
     game = "AP Tombola"
 
 
 def get_random_filler_item_name(world: APTombolaWorld) -> str:
     return "Orange Peel" # TODO actually give a random filler, so far only one exists so it's ok to hardcode it
+
+
+
+
 
 
