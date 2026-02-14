@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from BaseClasses import Item, ItemClassification
 
-from data import itemlist
+from .data import itemlist
 
 if TYPE_CHECKING:
     from .world import APTombolaWorld
