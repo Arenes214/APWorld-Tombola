@@ -103,7 +103,7 @@ TOMBOLA_REWARD_COUNT_MAX = 4
 # C indicates Card (e.g. 3xxxx is card 3)
 # S indicates which score it is (2 Ambo, 3 Terno, ..., 6 Decina, 7 Tombola)
 # N indicates for multiple score rewards which one it is
-# e.g. 24002 indicates Card 2, Score Quaterna, second reward for it
+# e.g. 24003 indicates Card 2, Score Quaterna, third reward
 
 def all_locations_to_id():
     the_list = {}
@@ -135,6 +135,33 @@ LOCATION_NAME_TO_ID = all_locations_to_id()
 class APTombolaLocation(Location):
     game = "AP Tombola"
 
+def get_location_names_with_ids(location_names: list[str]) -> dict[str, int | None]:
+    return {location_name: LOCATION_NAME_TO_ID[location_name] for location_name in location_names}
+
+def create_all_locations(world: APTombolaWorld) -> None:
+    create_regular_locations(world)
+    create_events(world)
+
+def create_regular_locations(world: APTombolaWorld) -> None:
+    # Get the regions
+    # Card 1 is index **1** since index 0 will be the starting regions
+    regions = []
+    regions.append(world.get_region("The Table"))
+    for i in range (1,7):
+        regions.append(world.get_region(f"Card {i}"))
+
+
+    for key, value in the_list.items():
+        # TODO When options can change the amount there will need to be some logic here
+        # For now just create all of them
+        if value >= 10000: # Check for the range of ids that are Card locations
+            region_index = value // 10000
+            # Probably wacky since i already got the id but might as well just follow APQuest for now
+            loc = get_location_names_with_ids([key])
+            regions[region_index].add_locations(loc, APTombolaLocation)
+
+def create_events(world: APTombolaWorld) -> None:
+    return #TODO later if needed
 
 
 
