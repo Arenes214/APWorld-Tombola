@@ -9,9 +9,6 @@ from . import items
 if TYPE_CHECKING:
     from .world import APTombolaWorld
 
-from collections import defaultdict
-
-
 
 # Later i'll maybe make the number of rewards changeable, this should save me a bit of time then
 AMBO_REWARD_COUNT_MAX = 1
