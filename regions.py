@@ -5,5 +5,5 @@ from typing import TYPE_CHECKING
 from BaseClasses import Entrance, Region
 
 if TYPE_CHECKING:
-    from .world import APQuestWorld
+    from .world import APTombolaWorld
 
