@@ -17,6 +17,9 @@ def all_items_to_id():
         key = itemlist.combine_number_name(item[0],item[1])
         the_list[key] = item[0]
 
+    for item in itemlist.fillers: # Add Fillers
+        the_list[item[1]] = item[0]
+
     return the_list
 
 def all_default_classifications():
@@ -25,3 +28,8 @@ def all_default_classifications():
     for item in itemlist.numbers: # Numbers
         key = itemlist.combine_number_name(item[0],item[1])
         classifications[key] = ItemClassification.progression
+
+    for item in itemlist.fillers: # Fillers
+        classifications[item[1]] = ItemClassification.filler
+
+    return classifications
