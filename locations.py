@@ -91,6 +91,45 @@ def generate_cards():
     return cards
 
 
+# Later i'll maybe make the number of rewards changeable, this should save me a bit of time then
+AMBO_REWARD_COUNT_MAX = 1
+TERNO_REWARD_COUNT_MAX = 2
+QUATERNA_REWARD_COUNT_MAX = 2
+CINQUINA_REWARD_COUNT_MAX = 3
+DECINA_REWARD_COUNT_MAX = 3
+TOMBOLA_REWARD_COUNT_MAX = 4
+
+# Location id - Cards will be 5 digit (Format CS00N)
+# C indicates Card (e.g. 3xxxx is card 3)
+# S indicates which score it is (2 Ambo, 3 Terno, ..., 6 Decina, 7 Tombola)
+# N indicates for multiple score rewards which one it is
+# e.g. 24002 indicates Card 2, Score Quaterna, second reward for it
+
+def all_locations_to_id():
+    the_list = {}
+
+    for card in range(6):
+        for i in range(AMBO_REWARD_COUNT_MAX): # Ambo locations
+            the_list[f"Card {card+1} - Ambo Reward {i+1}"] = (10000*(card+1))+2000+i+1
+
+        for i in range (TERNO_REWARD_COUNT_MAX): # Terno locations
+            the_list[f"Card {card+1} - Terno Reward {i+1}"] = (10000*(card+1))+3000+i+1
+
+        for i in range (QUATERNA_REWARD_COUNT_MAX): # Quaterna locations
+            the_list[f"Card {card+1} - Quaterna Reward {i+1}"] = (10000*(card+1))+4000+i+1
+
+        for i in range (CINQUINA_REWARD_COUNT_MAX): # Cinquina locations
+            the_list[f"Card {card+1} - Cinquina Reward {i+1}"] = (10000*(card+1))+5000+i+1
+
+        for i in range (DECINA_REWARD_COUNT_MAX): # Decina locations
+            the_list[f"Card {card+1} - Decina Reward {i+1}"] = (10000*(card+1))+6000+i+1
+
+        for i in range (TOMBOLA_REWARD_COUNT_MAX): # Tombola locations
+            the_list[f"Card {card+1} - Tombola Reward {i+1}"] = (10000*(card+1))+7000+i+1
+
+    return the_list
+
+
 
 
 
