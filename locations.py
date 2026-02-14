@@ -129,6 +129,13 @@ def all_locations_to_id():
 
     return the_list
 
+# Create the list with ids to mimic APQuest behaviour
+LOCATION_NAME_TO_ID = all_locations_to_id()
+
+class APTombolaLocation(Location):
+    game = "AP Tombola"
+
+
 
 
 
