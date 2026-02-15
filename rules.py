@@ -7,6 +7,7 @@ from BaseClasses import CollectionState
 from worlds.generic.Rules import add_rule, set_rule
 
 from .data import itemlist
+from . import cards
 
 if TYPE_CHECKING:
     from .world import APTombolaWorld
