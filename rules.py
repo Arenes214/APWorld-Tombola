@@ -1,4 +1,3 @@
-# TODO TEST WHEN RULES.PY IS DONE REMOVE THE COMMENTS IN WORLD.PY
 
 from __future__ import annotations
 
