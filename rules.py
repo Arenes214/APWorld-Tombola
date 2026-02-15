@@ -87,8 +87,8 @@ def check_decina(self, state: CollectionState, player: int, rows) -> bool:
     return false
 
 
-def set_completion_condition (world: APTombolaWorld) -> None:
-    world.multiworld.completion_condition[world.player] = lambda state: ##TODO
+#def set_completion_condition (world: APTombolaWorld) -> None:
+    #world.multiworld.completion_condition[world.player] = lambda state: ##TODO
 
 
 
