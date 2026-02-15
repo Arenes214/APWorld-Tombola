@@ -18,7 +18,7 @@ def set_all_rules(world: APTombolaWorld) -> None:
 
     set_all_entrance_rules(world)
     set_all_location_rules(world, all_cards)
-    # set_completion_condition(world)
+    set_completion_condition(world)
 
 
 def set_all_entrance_rules(world: APTombolaWorld) -> None:
@@ -72,7 +72,10 @@ def set_all_location_rules(world: APTombolaWorld, all_cards) -> None:
                 for row in actual_rows:
                     for n in row:
                         single_list.append(n)
-                set_rule(location, lambda state: state.has_all(single_list, world.player))
+                set_rule(location, lambda state, single_list_l=single_list: state.has_all(single_list_l, world.player))
+                # Also set rule of Tombola Event
+                event_location = world.get_location(f"Card {card_id+1} - Tombola Scored")
+                set_rule(event_location, lambda state, single_list_l=single_list: state.has_all(single_list_l, world.player))
 
             case _:
                 # Ambo through Cinquina can be made in the same function
@@ -84,8 +87,10 @@ def set_all_location_rules(world: APTombolaWorld, all_cards) -> None:
 
 
 
-#def set_completion_condition (world: APTombolaWorld) -> None:
-    #world.multiworld.completion_condition[world.player] = lambda state: ##TODO
+def set_completion_condition (world: APTombolaWorld) -> None:
+    goal_count = world.options.tombola_victory_count
+
+    world.multiworld.completion_condition[world.player] = lambda state: state.count("Tombola Scored", world.player) >= goal_count
 
 
 
