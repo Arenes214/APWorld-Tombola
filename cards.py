@@ -38,8 +38,6 @@ def generate_cards(world: APTombolaWorld):
             # Column count is not needed here since it will be 1 for each column
         all_card_numbers.append(card_numbers)
 
-    print(f"After taking the first 9 for each card, all_card_numbers is = {all_card_numbers}") # TODO TEST REMOVE ALL DEBUG PRINTS
-
     # Now we can take the remaining numbers to have 15 per Card
 
     #BUG: There is a possibility that later loops won't have enough columns to take from and will infinite loop
@@ -59,7 +57,6 @@ def generate_cards(world: APTombolaWorld):
             card_numbers.append((col, n))
             col_count[col] += 1
 
-    print (f"After taking the other 6 per card, all_card_numbers is = {all_card_numbers}")
     # Now that i have all of the cards' numbers, create the cards
     cards = []
 
@@ -109,5 +106,5 @@ def generate_cards(world: APTombolaWorld):
         # After doing everything add the card to cards
         cards.append(card)
 
-    print(f"After doing the cards, they are: {cards}")
+    print(f"After doing the cards, they are: {cards}") # TODO TEST REMOVE DEBUG PRINT
     return cards

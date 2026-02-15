@@ -59,12 +59,12 @@ def set_all_location_rules(world: APTombolaWorld, all_cards) -> None:
             case 6:
                 # Decina Function
                 # This is probably dumb but it should at least work
-                set_rule(location, lambda state: (state.has_from_list(actual_rows[0], world.player, 5)
-                                                  and state.has_from_list(actual_rows[1], world.player, 5)
-                                                  or state.has_from_list(actual_rows[0], world.player, 5)
-                                                  and state.has_from_list(actual_rows[2], world.player, 5)
-                                                  or state.has_from_list(actual_rows[1], world.player, 5)
-                                                  and state.has_from_list(actual_rows[2], world.player, 5)),
+                set_rule(location, lambda state, actual_rows_l=actual_rows: (state.has_from_list(actual_rows_l[0], world.player, 5)
+                                                  and state.has_from_list(actual_rows_l[1], world.player, 5)
+                                                  or state.has_from_list(actual_rows_l[0], world.player, 5)
+                                                  and state.has_from_list(actual_rows_l[2], world.player, 5)
+                                                  or state.has_from_list(actual_rows_l[1], world.player, 5)
+                                                  and state.has_from_list(actual_rows_l[2], world.player, 5)),
                          )
             case 7:
                 # Tombola Function
@@ -76,9 +76,13 @@ def set_all_location_rules(world: APTombolaWorld, all_cards) -> None:
 
             case _:
                 # Ambo through Cinquina can be made in the same function
-                set_rule(location, lambda state: state.has_from_list(actual_rows[0], world.player, int(score_type))
-                         or state.has_from_list(actual_rows[1], world.player, int(score_type))
-                         or state.has_from_list(actual_rows[2], world.player, int(score_type)))
+                score_type_int = int(score_type)
+                set_rule(location, lambda state, actual_rows_l=actual_rows, n=score_type_int: (state.has_from_list(actual_rows_l[0], world.player, n)
+                                                  or state.has_from_list(actual_rows_l[1], world.player, n)
+                                                  or state.has_from_list(actual_rows_l[2], world.player, n)),
+                        )
+
+
 
 #def set_completion_condition (world: APTombolaWorld) -> None:
     #world.multiworld.completion_condition[world.player] = lambda state: ##TODO
