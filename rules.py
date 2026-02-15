@@ -17,7 +17,7 @@ def set_all_rules(world: APTombolaWorld) -> None:
 
     set_all_entrance_rules(world)
     set_all_location_rules(world)
-    set_completion_condition(world)
+    # set_completion_condition(world)
 
 
 def set_all_entrance_rules(world: APTombolaWorld) -> None:
