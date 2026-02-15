@@ -42,6 +42,7 @@ def generate_cards(world: APTombolaWorld):
 
     #BUG: There is a possibility that later loops won't have enough columns to take from and will infinite loop
     #TODO FIX this
+    #BUG: Yeah this actually gets stuck half of the time lmao
     for card_numbers in all_card_numbers:
         col_count = defaultdict(lambda:1) # Create the column count at 1 since there is guaranteed exact 1 per column
 
