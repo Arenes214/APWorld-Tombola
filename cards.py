@@ -38,6 +38,8 @@ def generate_cards(world: APTombolaWorld):
             # Column count is not needed here since it will be 1 for each column
         all_card_numbers.append(card_numbers)
 
+    print(f"After taking the first 9 for each card, all_card_numbers is = {all_card_numbers}") # TODO TEST REMOVE ALL DEBUG PRINTS
+
     # Now we can take the remaining numbers to have 15 per Card
 
     #BUG: There is a possibility that later loops won't have enough columns to take from and will infinite loop
@@ -57,19 +59,42 @@ def generate_cards(world: APTombolaWorld):
             card_numbers.append((col, n))
             col_count[col] += 1
 
+    print (f"After taking the other 6 per card, all_card_numbers is = {all_card_numbers}")
     # Now that i have all of the cards' numbers, create the cards
     cards = []
 
     # And populate them
     for card_numbers in all_card_numbers:
         card = [[0] * 9 for _ in range (3)]
-        row_count = [0,0,0] # Create the row count for the "5 per row"" rule
+        row_count = [0,0,0] # Create the row count for the "5 per row" rule
 
         for (col, n) in card_numbers:
-            possible_rows = [r for r in range(3) if row_count[r] < 5]
-            row = world.random.choice(possible_rows)
-            card[row][col] = n
-            row_count[row] += 1
+            # Place all of them dumbly first
+            for row in range(3):
+                if not card[row][col]:
+                    card[row][col] = n
+                    row_count[row] += 1
+                    break
+
+        # Then move them randomly in the columns until all of the rows are 5
+        while (max(row_count) > 5):
+            row_high = row_count.index(max(row_count))
+            row_low = row_count.index(min(row_count))
+
+            # Calculate the possible columns to make it easier
+            # This should always give at least a column
+            movable_col = [
+                col for col in range(9)
+                if card[row_high][col] != 0 and card[row_low][col] == 0
+            ]
+
+            col = world.random.choice(movable_col)
+
+            card[row_low][col] = card[row_high][col]
+            card[row_high][col] = 0
+
+            row_count[row_high] -= 1
+            row_count[row_low] += 1
 
         # After poplulating them, order the columns
         for col in range (9):
@@ -84,4 +109,5 @@ def generate_cards(world: APTombolaWorld):
         # After doing everything add the card to cards
         cards.append(card)
 
+    print(f"After doing the cards, they are: {cards}")
     return cards

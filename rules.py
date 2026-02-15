@@ -17,7 +17,7 @@ def set_all_rules(world: APTombolaWorld) -> None:
     all_cards = cards.generate_cards(world)
 
     set_all_entrance_rules(world)
-    set_all_location_rules(world)
+    set_all_location_rules(world, all_cards)
     # set_completion_condition(world)
 
 
@@ -25,10 +25,10 @@ def set_all_entrance_rules(world: APTombolaWorld) -> None:
     # Currently all regions are just accessible, this may be used later for "cardsanity" aka locked cards
     return
 
-def set_all_location_rules(world: APTombolaWorld) -> None:
+def set_all_location_rules(world: APTombolaWorld, all_cards) -> None:
 
     # Go through all Card locations
-    for (loc_id, loc_name) in world.id_to_location_name:
+    for loc_name, loc_id in world.location_name_to_id.items():
         if loc_id < 10000:
             continue # Skip all non-card
         location = world.get_location(loc_name)
@@ -36,20 +36,21 @@ def set_all_location_rules(world: APTombolaWorld) -> None:
         # Get the type of location it is by its ID
         # TODO This won't work in a future where there are more than 9 cards
         loc_id_str = str(loc_id)
-        card_id = int(loc_id_str(0)) - 1
-        score_type = int(loc_id_str(1))
-        score_count = int(loc_id_str(5))
+        card_id = int(loc_id_str[0]) - 1
+        score_type = int(loc_id_str[1])
+        score_count = int(loc_id_str[4])
 
+        # Get the corresponding card's rows
         card_rows = all_cards[card_id]
         actual_rows = []
 
         # Ignore the zeros and get the item's name
-        for row in rows:
+        for row in card_rows:
             temp = []
             for n in row:
                 if not n:
                     continue
-                actual_item = itemlist.combine_number_name(number, itemlist.numbers[number])
+                actual_item = itemlist.combine_number_name(n, itemlist.numbers[n-1][1])
                 temp.append(actual_item)
             actual_rows.append(temp)
 
@@ -57,7 +58,14 @@ def set_all_location_rules(world: APTombolaWorld) -> None:
         match score_type:
             case 6:
                 # Decina Function
-                set_rule(location, lambda state: check_decina(state, world.player, actual_rows))
+                # This is probably dumb but it should at least work
+                set_rule(location, lambda state: (state.has_from_list(actual_rows[0], world.player, 5)
+                                                  and state.has_from_list(actual_rows[1], world.player, 5)
+                                                  or state.has_from_list(actual_rows[0], world.player, 5)
+                                                  and state.has_from_list(actual_rows[2], world.player, 5)
+                                                  or state.has_from_list(actual_rows[1], world.player, 5)
+                                                  and state.has_from_list(actual_rows[2], world.player, 5)),
+                         )
             case 7:
                 # Tombola Function
                 single_list = []
@@ -68,25 +76,9 @@ def set_all_location_rules(world: APTombolaWorld) -> None:
 
             case _:
                 # Ambo through Cinquina can be made in the same function
-                set_rule(location, lambda state: state.has_from_list(rows[0], world.player, int(score_type))
-                         or state.has_from_list(rows[1], world.player, int(score_type))
-                         or state.has_from_list(rows[2], world.player, int(score_type)))
-
-
-        # Get the i
-       # for number in all_cards[card_id-1]:
-            #item_name = itemlist.combine_number_name(number, itemlist.numbers[number])
-
-
-def check_decina(self, state: CollectionState, player: int, rows) -> bool:
-    counter = 0
-    for row in rows:
-        if (state.has_all(row, player)):
-            counter += 1
-            if counter == 2:
-                return true
-    return false
-
+                set_rule(location, lambda state: state.has_from_list(actual_rows[0], world.player, int(score_type))
+                         or state.has_from_list(actual_rows[1], world.player, int(score_type))
+                         or state.has_from_list(actual_rows[2], world.player, int(score_type)))
 
 #def set_completion_condition (world: APTombolaWorld) -> None:
     #world.multiworld.completion_condition[world.player] = lambda state: ##TODO
