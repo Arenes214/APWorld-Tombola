@@ -80,8 +80,11 @@ def create_regular_locations(world: APTombolaWorld) -> None:
             regions[region_index].add_locations(loc, APTombolaLocation)
 
 def create_events(world: APTombolaWorld) -> None:
-    # Create Event Item
-    victory_item = items.APTombolaItem("Tombola Scored", ItemClassification.progression, None, world.player)
+    # Get Regions
+    starting_region = world.get_region("The Table")
+
+    # Create Event Items
+    victory_item_tombola = items.APTombolaItem("Tombola Scored", ItemClassification.progression, None, world.player)
 
     # Create Tombola Events for goal tracking
     for i in range(6):
@@ -90,8 +93,12 @@ def create_events(world: APTombolaWorld) -> None:
 
         # Create Location and set item to it
         event_location = APTombolaLocation(world.player, f"Card {i+1} - Tombola Scored", None, region)
-        event_location.place_locked_item(victory_item)
+        event_location.place_locked_item(victory_item_tombola)
         region.locations.append(event_location)
+
+    # Create "Goal requirement fullfilled" location
+    starting_region.add_event("Tombola Count Requirement Reached", "Victory Token", location_type=APTombolaLocation, item_type=items.APTombolaItem)
+
 
 
 
