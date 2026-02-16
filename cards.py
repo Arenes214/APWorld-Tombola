@@ -47,16 +47,33 @@ def generate_cards(world: APTombolaWorld):
         col_count = defaultdict(lambda:1) # Create the column count at 1 since there is guaranteed exact 1 per column
 
         while (len(card_numbers) < 15):
-            col = world.random.randint(0,8)
+            # Only take from columns that have 3 or more numbers, unless all of them don't have 3
+            # This avoids an infinite loop
+            takeable_col = []
+            for col in range(9):
+                if len(sheet_columns[col]) >= 3:
+                    takeable_col.append(col)
 
-            if col_count[col] >=3: # Don't take if we already have 3 in column
-                continue
-            if not sheet_columns[col]: # And seriously don't try to take from an empty column
-                continue
+            # At this point if takeable_col is empty, all columns are 2 or lower
+            if not takeable_col:
+                for i in range(9):
+                    takeable_col.append(i)
 
-            n = sheet_columns[col].pop()
-            card_numbers.append((col, n))
-            col_count[col] += 1
+
+            # Avoid recalculation the above, only retry this part
+            while (True):
+
+                col = world.random.choice(takeable_col)
+
+                if col_count[col] >=3: # Don't take if we already have 3 in column
+                    continue
+                if not sheet_columns[col]: # And seriously don't try to take from an empty column
+                    continue
+
+                n = sheet_columns[col].pop()
+                card_numbers.append((col, n))
+                col_count[col] += 1
+                break
 
     # Now that i have all of the cards' numbers, create the cards
     cards = []
@@ -107,5 +124,5 @@ def generate_cards(world: APTombolaWorld):
         # After doing everything add the card to cards
         cards.append(card)
 
-    print(f"After doing the cards, they are: {cards}") # TODO TEST REMOVE DEBUG PRINT
+    print(f"DEBUG: APTombola Cards: {cards}") # TODO TEST REMOVE DEBUG PRINT
     return cards
