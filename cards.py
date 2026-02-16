@@ -40,8 +40,16 @@ def generate_cards(world: APTombolaWorld):
 
     # Now we can take the remaining numbers to have 15 per Card
 
+    force_first = 1
+
     for card_numbers in all_card_numbers:
         col_count = defaultdict(lambda:1) # Create the column count at 1 since there is guaranteed exact 1 per column
+
+        if force_first:
+            n = sheet_columns[8].pop()
+            card_numbers.append((col, n))
+            col_count[8] += 1
+            force_first = 0
 
         while (len(card_numbers) < 15):
             # Only take from columns that have 3 or more numbers, unless all of them don't have 3
@@ -50,7 +58,8 @@ def generate_cards(world: APTombolaWorld):
             for col in range(9):
                 if len(sheet_columns[col]) >= 3:
                     takeable_col.append(col)
-                    if len(sheet_columns) == 5:
+                    if len(sheet_columns[col]) == 5:
+                        print(f"The first takes column {col}")
                         break # Avoid the situation where the last column is never taken which would lead to an infinite loop
                               # Now later cards will always be able to take at most 2 from a column
 
@@ -62,7 +71,6 @@ def generate_cards(world: APTombolaWorld):
 
             # Avoid recalculation the above, only retry this part
             while (True):
-
                 col = world.random.choice(takeable_col)
 
                 if col_count[col] >=3: # Don't take if we already have 3 in column
