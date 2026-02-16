@@ -91,7 +91,7 @@ def set_completion_condition (world: APTombolaWorld) -> None:
     # Define rule for "Requirement Reached" locations
     tombola_goal_count = world.options.tombola_victory_count
     tombola_count_reached_loc = world.get_location("Tombola Count Requirement Reached")
-    set_rule(tombola_count_reached_loc, lambda state, c=tombola_goal_count: state.count("Tombola Scored", world.player) >= tombola_goal_count)
+    set_rule(tombola_count_reached_loc, lambda state, c=tombola_goal_count: state.count("Tombola Scored", world.player) >= c)
 
     # Set Goal condition
     world.multiworld.completion_condition[world.player] = lambda state: state.has("Victory Token", world.player)
