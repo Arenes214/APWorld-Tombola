@@ -92,12 +92,12 @@ def create_events(world: APTombolaWorld) -> None:
         region = world.get_region(f"Card {i+1}")
 
         # Create Location and set item to it
-        event_location = APTombolaLocation(world.player, f"Card {i+1} - Tombola Scored", None, region)
+        event_location = APTombolaLocation(world.player, f"EVENT: Card {i+1} - Tombola Scored", None, region)
         event_location.place_locked_item(victory_item_tombola)
         region.locations.append(event_location)
 
     # Create "Goal requirement fullfilled" location
-    starting_region.add_event("Tombola Count Requirement Reached", "Victory Token", location_type=APTombolaLocation, item_type=items.APTombolaItem)
+    starting_region.add_event("EVENT: Tombola Count Requirement Reached", "Victory Token", location_type=APTombolaLocation, item_type=items.APTombolaItem)
 
 
 

@@ -33,6 +33,13 @@ def set_all_location_rules(world: APTombolaWorld, all_cards) -> None:
             continue # Skip all non-card
         location = world.get_location(loc_name)
 
+        #Prevent the location from having AP Tombola items and other Meta if the setting is on
+        if world.options.prevent_other_meta_game_items:
+            location.item_rule = lambda item: item.game != "AP Tombola" and item.game != "APBingo"
+        else:
+            location.item_rule = lambda item: item.game != "AP Tombola"
+
+
         # Get the type of location it is by its ID
         # TODO This won't work in a future where there are more than 9 cards
         loc_id_str = str(loc_id)
@@ -54,7 +61,7 @@ def set_all_location_rules(world: APTombolaWorld, all_cards) -> None:
                 temp.append(actual_item)
             actual_rows.append(temp)
 
-        # Set the rule for the location
+        # Set the access rule for the location, aka what numbers are needed
         match score_type:
             case 6:
                 # Decina Function
@@ -74,7 +81,7 @@ def set_all_location_rules(world: APTombolaWorld, all_cards) -> None:
                         single_list.append(n)
                 set_rule(location, lambda state, single_list_l=single_list: state.has_all(single_list_l, world.player))
                 # Also set rule of Tombola Event
-                event_location = world.get_location(f"Card {card_id+1} - Tombola Scored")
+                event_location = world.get_location(f"EVENT: Card {card_id+1} - Tombola Scored")
                 set_rule(event_location, lambda state, single_list_l=single_list: state.has_all(single_list_l, world.player))
 
             case _:
@@ -88,9 +95,10 @@ def set_all_location_rules(world: APTombolaWorld, all_cards) -> None:
 
 
 def set_completion_condition (world: APTombolaWorld) -> None:
+
     # Define rule for "Requirement Reached" locations
     tombola_goal_count = world.options.tombola_victory_count
-    tombola_count_reached_loc = world.get_location("Tombola Count Requirement Reached")
+    tombola_count_reached_loc = world.get_location("EVENT: Tombola Count Requirement Reached")
     set_rule(tombola_count_reached_loc, lambda state, c=tombola_goal_count: state.count("Tombola Scored", world.player) >= c)
 
     # Set Goal condition
