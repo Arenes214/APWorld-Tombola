@@ -40,9 +40,6 @@ def generate_cards(world: APTombolaWorld):
 
     # Now we can take the remaining numbers to have 15 per Card
 
-    #BUG: There is a possibility that later loops won't have enough columns to take from and will infinite loop
-    #TODO FIX this
-    #BUG: Yeah this actually gets stuck half of the time lmao
     for card_numbers in all_card_numbers:
         col_count = defaultdict(lambda:1) # Create the column count at 1 since there is guaranteed exact 1 per column
 
@@ -53,6 +50,9 @@ def generate_cards(world: APTombolaWorld):
             for col in range(9):
                 if len(sheet_columns[col]) >= 3:
                     takeable_col.append(col)
+                    if len(sheet_columns) == 5:
+                        break # Avoid the situation where the last column is never taken which would lead to an infinite loop
+                              # Now later cards will always be able to take at most 2 from a column
 
             # At this point if takeable_col is empty, all columns are 2 or lower
             if not takeable_col:
