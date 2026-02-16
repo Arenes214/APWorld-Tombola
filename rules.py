@@ -7,7 +7,7 @@ from BaseClasses import CollectionState
 from worlds.generic.Rules import add_rule, set_rule
 
 from .data import itemlist
-from . import cards
+from . import cards, locations
 
 if TYPE_CHECKING:
     from .world import APTombolaWorld
@@ -22,23 +22,23 @@ def set_all_rules(world: APTombolaWorld) -> None:
 
 
 def set_all_entrance_rules(world: APTombolaWorld) -> None:
-    # Currently all regions are just accessible, this may be used later for "cardsanity" aka locked cards
+    if world.options.cardsanity:
+        # Get entrance
+        # set_rule(entrance, lamba: the rule)
+        for card in world.cardsanity_to_lock:
+            entrance = world.get_entrance(f"Look at Card {card}")
+            set_rule(entrance, lambda state, card_l=card: state.has(f"Card {card_l} Unlock", world.player))
+
     return
 
 def set_all_location_rules(world: APTombolaWorld, all_cards) -> None:
 
-    # Go through all Card locations
-    for loc_name, loc_id in world.location_name_to_id.items():
-        if loc_id < 10000:
-            continue # Skip all non-card
+    # Set rules for all Card Score locations
+    for loc_name, loc_id in locations.create_all_card_score_locations().items():
         location = world.get_location(loc_name)
 
-        #Prevent the location from having AP Tombola items and other Meta if the setting is on
-        if world.options.prevent_other_meta_game_items:
-            location.item_rule = lambda item: item.game != "AP Tombola" and item.game != "APBingo"
-        else:
-            location.item_rule = lambda item: item.game != "AP Tombola"
-
+        # Set Item Rule for location
+        set_anti_meta_rule(world, location)
 
         # Get the type of location it is by its ID
         # TODO This won't work in a future where there are more than 9 cards
@@ -92,7 +92,23 @@ def set_all_location_rules(world: APTombolaWorld, all_cards) -> None:
                                                   or state.has_from_list(actual_rows_l[2], world.player, n)),
                         )
 
+    # Set cardsanity unlock rules if they exist
+    if world.options.cardsanity:
+        print("Entered IF")
+        for card in world.cardsanity_to_lock:
+            location = world.get_location(f"Card {card} Unlocked")
 
+            # Set item rule
+            set_anti_meta_rule(world, location)
+
+            # Set location rule
+            set_rule(location, lambda state, card_l=card: state.has(f"Card {card_l} Unlock", world.player))
+
+def set_anti_meta_rule(world: APTombolaWorld, location: APTombolaLocation):
+        if world.options.prevent_other_meta_game_items:
+            location.item_rule = lambda item: item.game != "AP Tombola" and item.game != "APBingo"
+        else:
+            location.item_rule = lambda item: item.game != "AP Tombola"
 
 def set_completion_condition (world: APTombolaWorld) -> None:
 

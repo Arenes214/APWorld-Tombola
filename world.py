@@ -13,7 +13,6 @@ class APTombolaWorld(World):
 
     game = "AP Tombola"
 
-
     options_dataclass = options.APTombolaOptions
     options: options.APTombolaOptions
 
@@ -22,15 +21,32 @@ class APTombolaWorld(World):
 
     origin_region_name = "The Table"
 
+    cardsanity_to_lock = []
+
+    def generate_early(self) -> None:
+        # Choose Cardsanity Cards to lock
+        if self.options.cardsanity:
+            count = self.options.cardsanity
+            cards = [i for i in range(1,7)]
+            self.random.shuffle(cards)
+
+            while (count):
+                self.cardsanity_to_lock.append(cards.pop())
+                count -= 1
+                print(f"At generate_early cardsanity_to_lock is {self.cardsanity_to_lock}")
+
+
     def create_regions(self) -> None:
         regions.create_and_connect_regions(self)
         locations.create_all_locations(self)
+        print(f"At create_regions cardsanity_to_lock is {self.cardsanity_to_lock}")
 
     def set_rules(self) -> None:
         rules.set_all_rules(self)
 
     def create_items(self) -> None:
         items.create_all_items(self)
+        print(f"At create_items cardsanity_to_lock is {self.cardsanity_to_lock}")
 
     def create_item(self, name: str) -> items.APTombolaItem:
         return items.create_item_with_correct_classification(self, name)

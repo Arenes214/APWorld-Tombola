@@ -45,6 +45,7 @@ def generate_cards(world: APTombolaWorld):
     for card_numbers in all_card_numbers:
         col_count = defaultdict(lambda:1) # Create the column count at 1 since there is guaranteed exact 1 per column
 
+        # Avoid infinite loop by taking a number from the last column at start
         if force_first:
             n = sheet_columns[8].pop()
             card_numbers.append((col, n))
@@ -58,10 +59,6 @@ def generate_cards(world: APTombolaWorld):
             for col in range(9):
                 if len(sheet_columns[col]) >= 3:
                     takeable_col.append(col)
-                    if len(sheet_columns[col]) == 5:
-                        print(f"The first takes column {col}")
-                        break # Avoid the situation where the last column is never taken which would lead to an infinite loop
-                              # Now later cards will always be able to take at most 2 from a column
 
             # At this point if takeable_col is empty, all columns are 2 or lower
             if not takeable_col:

@@ -97,3 +97,12 @@ def combine_number_name(number, name):
 fillers = [
     [1001, "Orange Peel"],
 ]
+
+unlocks = [
+    [101, "Card 1 Unlock"],
+    [102, "Card 2 Unlock"],
+    [103, "Card 3 Unlock"],
+    [104, "Card 4 Unlock"],
+    [105, "Card 5 Unlock"],
+    [106, "Card 6 Unlock"],
+]

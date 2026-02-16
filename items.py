@@ -20,6 +20,9 @@ def all_items_to_id():
     for item in itemlist.fillers: # Add Fillers
         the_list[item[1]] = item[0]
 
+    for item in itemlist.unlocks: # Add Cardsanity Unlocks
+        the_list[item[1]] = item[0]
+
     return the_list
 
 def all_default_classifications():
@@ -31,6 +34,9 @@ def all_default_classifications():
 
     for item in itemlist.fillers: # Fillers
         classifications[item[1]] = ItemClassification.filler
+
+    for item in itemlist.unlocks: # Cardsanity unlocks
+        classifications[item[1]] = ItemClassification.progression
 
     return classifications
 
@@ -57,6 +63,11 @@ def create_all_items(world: APTombolaWorld) -> None:
     for item in itemlist.numbers:
         to_pool = world.create_item(itemlist.combine_number_name(item[0],item[1]))
         itempool.append(to_pool)
+
+    if world.options.cardsanity:
+        for card in world.cardsanity_to_lock:
+            to_pool = world.create_item(f"Card {card} Unlock")
+            itempool.append(to_pool)
 
     # TODO filler and other stuff planned
 

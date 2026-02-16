@@ -21,19 +21,34 @@ class PreventOtherMetaGameItems(DefaultOnToggle):
     """
     display_name = "Prevent Other Meta-Game Items"
 
+class Cardsanity(Range):
+    """
+    If Cardsanity is set to a value other than zero, than that many Cards will be locked.
+    A locked Card may be unlocked by receiving its corresponding "Card Unlock" item.
+    Unlocking a Card sends an item to the multiworld.
+    (Default is 0)
+    """
+    display_name = "Cardsanity"
 
+    range_start = 0
+    range_end = 6
+
+    default = 0
+
+# TODO STARTING HINTS
 
 # Define Dataclass
 @dataclass
 class APTombolaOptions(PerGameCommonOptions):
     tombola_victory_count: TombolaVictoryCount
     prevent_other_meta_game_items: PreventOtherMetaGameItems
+    cardsanity: Cardsanity
 
 
 option_groups = [
     OptionGroup("Goal Options", [TombolaVictoryCount]),
 
-    OptionGroup("Sanity Options", [])
+    OptionGroup("Sanity Options", [Cardsanity])
 
 
 ]
