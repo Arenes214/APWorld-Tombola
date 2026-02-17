@@ -28,6 +28,7 @@ class APTombolaWorld(World):
     origin_region_name = "The Table"
 
     cardsanity_to_lock = []
+    all_cards = []
 
     def generate_early(self) -> None:
         # Extra clearing of the list so that the fuzzer does not shit itself
@@ -36,11 +37,11 @@ class APTombolaWorld(World):
         # Choose Cardsanity Cards to lock
         if self.options.cardsanity:
             count = self.options.cardsanity
-            cards = [i for i in range(1,7)]
-            self.random.shuffle(cards)
+            t_cards = [i for i in range(1,7)]
+            self.random.shuffle(t_cards)
 
             while (count > 0):
-                self.cardsanity_to_lock.append(cards.pop())
+                self.cardsanity_to_lock.append(t_cards.pop())
                 count -= 1
 
         # Add Starting Hints if needed
@@ -57,6 +58,10 @@ class APTombolaWorld(World):
             for item in itemlist.numbers:
                 to_hint.append(itemlist.combine_number_name(item[0],item[1]))
             self.options.start_hints = TombolaStartHints(to_hint)
+
+        # Create the Cards
+        self.all_cards.clear() # Preemptive clear to avoid the fuzzer shitting itself again
+        self.all_cards = cards.generate_cards(self)
 
 
     def create_regions(self) -> None:
@@ -85,6 +90,17 @@ class APTombolaWorld(World):
         #return self.options.as_dict(
         #    "hard_mode", "hammer", "extra_starting_chest", "confetti_explosiveness", "player_sprite"
         #)
+
+    def fill_slot_data(self) -> dict[str, Any]:
+        to_send = {}
+        to_send["Cards"] = self.all_cards
+
+        if self.options.cardsanity:
+            to_send["Cards Locked"] = self.cardsanity_to_lock
+
+        to_send.update(self.options.as_dict("tombola_victory_count","cardsanity"))
+
+        return to_send
 
 
 

@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 def set_all_rules(world: APTombolaWorld) -> None:
 
-    all_cards = cards.generate_cards(world)
+    all_cards = world.all_cards
 
     set_all_entrance_rules(world)
     set_all_location_rules(world, all_cards)
