@@ -73,6 +73,39 @@ def create_all_items(world: APTombolaWorld) -> None:
 
     world.multiworld.itempool += itempool
 
+def create_all_item_groups():
+    item_groups = {}
+
+    # - Numbers Group
+    group_numbers = set()
+
+    for item in itemlist.numbers:
+        item_name = itemlist.combine_number_name(item[0],item[1])
+
+        # Add to Numbers Group
+        group_numbers.add(item_name)
+
+        # Create single number group for easy hinting
+        singular_group = set()
+        singular_group.add(item_name)
+        item_groups[str(item[0])] = singular_group
+
+    # Add the Numbers group to item_groups
+    item_groups["Numbers"] = group_numbers
+
+    # - Unlocks Group
+    group_unlocks = set()
+
+    for item in itemlist.unlocks:
+        group_unlocks.add(item[1])
+
+    item_groups["Unlocks"] = group_unlocks
+
+    # TODO Create filler list when filler will actually exist
+
+    return item_groups
+
+
 
 
 

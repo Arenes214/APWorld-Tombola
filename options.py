@@ -1,11 +1,12 @@
 from dataclasses import dataclass
 
-from Options import Choice, OptionGroup, PerGameCommonOptions, Range, Toggle, DefaultOnToggle
+from Options import Choice, OptionGroup, PerGameCommonOptions, Range, Toggle, DefaultOnToggle, StartHints
 
 # Options here
 class TombolaVictoryCount(Range):
     """
-    Sets the amount of Tombola needed to goal the game. (Default is 3)
+    Sets the amount of Tombola needed to goal the game.
+    (Default is 3)
     """
     display_name = "Tombola Victory Count"
     range_start = 1
@@ -21,6 +22,13 @@ class PreventOtherMetaGameItems(DefaultOnToggle):
     """
     display_name = "Prevent Other Meta-Game Items"
 
+class AutomaticNumberHints(DefaultOnToggle):
+    """
+    When enabled, all Numbers will be automatically hinted. Highly reccomended.
+    (Default: Enabled)
+    """
+    display_name = "Automatic Number Hints"
+
 class Cardsanity(Range):
     """
     If Cardsanity is set to a value other than zero, than that many Cards will be locked.
@@ -35,21 +43,28 @@ class Cardsanity(Range):
 
     default = 0
 
-# TODO STARTING HINTS
+class TombolaStartHints(StartHints):
+    """
+    Start with these item's locations prefilled into the ``!hint`` command.
+    """
+    default = []
 
 # Define Dataclass
 @dataclass
 class APTombolaOptions(PerGameCommonOptions):
     tombola_victory_count: TombolaVictoryCount
     prevent_other_meta_game_items: PreventOtherMetaGameItems
+    automatic_number_hints: AutomaticNumberHints
     cardsanity: Cardsanity
+    start_hints: TombolaStartHints
+
 
 
 option_groups = [
-    OptionGroup("Goal Options", [TombolaVictoryCount]),
+    OptionGroup("Goal Options", [TombolaVictoryCount],),
 
-    OptionGroup("Sanity Options", [Cardsanity])
+    OptionGroup("Misc Options", [PreventOtherMetaGameItems, AutomaticNumberHints],),
 
-
+    OptionGroup("Sanity Options", [Cardsanity],),
 ]
 

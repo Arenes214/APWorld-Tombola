@@ -3,7 +3,9 @@ from typing import Any
 
 from worlds.AutoWorld import World
 
-from . import items, locations, options, regions, rules, cards
+from . import items, locations, regions, rules, cards, web_world
+from .options import TombolaStartHints
+from . import options as aptombola_options
 from .data import itemlist
 
 class APTombolaWorld(World):
@@ -13,11 +15,15 @@ class APTombolaWorld(World):
 
     game = "AP Tombola"
 
-    options_dataclass = options.APTombolaOptions
-    options: options.APTombolaOptions
+    web = web_world.APTombolaWebWorld()
+
+    options_dataclass = aptombola_options.APTombolaOptions
+    options: aptombola_options.APTombolaOptions
 
     location_name_to_id = locations.LOCATION_NAME_TO_ID
     item_name_to_id = items.ITEM_NAME_TO_ID
+
+    item_name_groups = items.create_all_item_groups()
 
     origin_region_name = "The Table"
 
@@ -33,10 +39,24 @@ class APTombolaWorld(World):
             cards = [i for i in range(1,7)]
             self.random.shuffle(cards)
 
-
             while (count > 0):
                 self.cardsanity_to_lock.append(cards.pop())
                 count -= 1
+
+        # Add Starting Hints if needed
+        print(f"Before the function, start_hints is: {self.options.start_hints}")
+
+        if self.options.automatic_number_hints:
+            to_hint = []
+            intermidiate_step = str(self.options.start_hints)
+            already_prehinted = intermidiate_step[intermidiate_step.find("(")+1: -1]
+            if (already_prehinted):
+                for i in already_prehinted.split(","):
+                    to_hint.append(i.strip())
+
+            for item in itemlist.numbers:
+                to_hint.append(itemlist.combine_number_name(item[0],item[1]))
+            self.options.start_hints = TombolaStartHints(to_hint)
 
 
     def create_regions(self) -> None:
