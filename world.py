@@ -24,7 +24,9 @@ class APTombolaWorld(World):
     cardsanity_to_lock = []
 
     def generate_early(self) -> None:
+        # Extra clearing of the list so that the fuzzer does not shit itself
         self.cardsanity_to_lock.clear()
+
         # Choose Cardsanity Cards to lock
         if self.options.cardsanity:
             count = self.options.cardsanity
