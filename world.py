@@ -24,16 +24,17 @@ class APTombolaWorld(World):
     cardsanity_to_lock = []
 
     def generate_early(self) -> None:
+        self.cardsanity_to_lock.clear()
         # Choose Cardsanity Cards to lock
         if self.options.cardsanity:
             count = self.options.cardsanity
             cards = [i for i in range(1,7)]
             self.random.shuffle(cards)
 
-            while (count):
+
+            while (count > 0):
                 self.cardsanity_to_lock.append(cards.pop())
                 count -= 1
-                print(f"At generate_early cardsanity_to_lock is {self.cardsanity_to_lock}")
 
 
     def create_regions(self) -> None:
