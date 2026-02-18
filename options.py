@@ -24,7 +24,7 @@ class PreventOtherMetaGameItems(DefaultOnToggle):
 
 class AutomaticNumberHints(DefaultOnToggle):
     """
-    When enabled, all Numbers will be automatically hinted. Highly reccomended.
+    When enabled, all Numbers will be automatically hinted. Highly recommended.
     (Default: Enabled)
     """
     display_name = "Automatic Number Hints"

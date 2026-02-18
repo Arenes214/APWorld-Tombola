@@ -2,6 +2,7 @@ from collections.abc import Mapping
 from typing import Any
 
 from worlds.AutoWorld import World
+from Options import ProgressionBalancing
 
 from . import items, locations, regions, rules, cards, web_world
 from .options import TombolaStartHints
@@ -31,6 +32,9 @@ class APTombolaWorld(World):
     all_cards = []
 
     def generate_early(self) -> None:
+        # Forge ProgBal to 0
+        self.options.progression_balancing = ProgressionBalancing(0)
+
         # Extra clearing of the list so that the fuzzer does not shit itself
         self.cardsanity_to_lock.clear()
 
