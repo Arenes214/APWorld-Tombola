@@ -129,5 +129,4 @@ def generate_cards(world: APTombolaWorld):
         # After doing everything add the card to cards
         cards.append(card)
 
-    print(f"DEBUG: APTombola Cards: {cards}") # TODO TEST REMOVE DEBUG PRINT
     return cards

@@ -94,7 +94,6 @@ def set_all_location_rules(world: APTombolaWorld, all_cards) -> None:
 
     # Set cardsanity unlock rules if they exist
     if world.options.cardsanity:
-        print("Entered IF")
         for card in world.cardsanity_to_lock:
             location = world.get_location(f"Card {card} Unlocked")
 

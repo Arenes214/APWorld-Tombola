@@ -49,7 +49,6 @@ class APTombolaWorld(World):
                 count -= 1
 
         # Add Starting Hints if needed
-        print(f"Before the function, start_hints is: {self.options.start_hints}")
 
         if self.options.automatic_number_hints:
             to_hint = []
@@ -71,14 +70,12 @@ class APTombolaWorld(World):
     def create_regions(self) -> None:
         regions.create_and_connect_regions(self)
         locations.create_all_locations(self)
-        print(f"At create_regions cardsanity_to_lock is {self.cardsanity_to_lock}")
 
     def set_rules(self) -> None:
         rules.set_all_rules(self)
 
     def create_items(self) -> None:
         items.create_all_items(self)
-        print(f"At create_items cardsanity_to_lock is {self.cardsanity_to_lock}")
 
     def create_item(self, name: str) -> items.APTombolaItem:
         return items.create_item_with_correct_classification(self, name)
