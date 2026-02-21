@@ -1,6 +1,6 @@
 {
     "game": "AP Tombola",
-    "world_version": "0.0.2",
+    "world_version": "0.1.0",
     "minimum_ap_version": "0.6.6",
     "authors": ["Arenes214"],
     "version": 7,
