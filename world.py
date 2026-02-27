@@ -38,6 +38,8 @@ class APTombolaWorld(World):
         # Extra clearing of the list so that the fuzzer does not shit itself
         self.cardsanity_to_lock.clear()
 
+        to_lock = []
+
         # Choose Cardsanity Cards to lock
         if self.options.cardsanity:
             count = self.options.cardsanity
@@ -45,8 +47,9 @@ class APTombolaWorld(World):
             self.random.shuffle(t_cards)
 
             while (count > 0):
-                self.cardsanity_to_lock.append(t_cards.pop())
+                to_lock.append(t_cards.pop())
                 count -= 1
+            self.cardsanity_to_lock = to_lock
 
         # Add Starting Hints if needed
 
