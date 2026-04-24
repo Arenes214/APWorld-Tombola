@@ -34,14 +34,14 @@ def set_all_entrance_rules(world: APTombolaWorld) -> None:
 def set_all_location_rules(world: APTombolaWorld, all_cards) -> None:
 
     # Set rules for all Card Score locations
-    for loc_name, loc_id in locations.create_all_card_score_locations().items():
+    for loc_name, loc_id in locations.create_all_regular_card_score_locations().items():
         location = world.get_location(loc_name)
 
         # Set Item Rule for location
         set_anti_meta_rule(world, location)
 
         # Get the type of location it is by its ID
-        # TODO This won't work in a future where there are more than 9 cards
+        # TODO This wouldn't work in a future where there are more than 9 cards
         loc_id_str = str(loc_id)
         card_id = int(loc_id_str[0]) - 1
         score_type = int(loc_id_str[1])
@@ -105,9 +105,9 @@ def set_all_location_rules(world: APTombolaWorld, all_cards) -> None:
 
 def set_anti_meta_rule(world: APTombolaWorld, location: APTombolaLocation):
         if world.options.prevent_other_meta_game_items:
-            location.item_rule = lambda item: item.game != "AP Tombola" and item.game != "APBingo"
+            location.item_rule = lambda item: (not item.game != "AP Tombola" and item.classification == ItemClassification.progression) and item.game != "APBingo"
         else:
-            location.item_rule = lambda item: item.game != "AP Tombola"
+            location.item_rule = lambda item: (not item.game != "AP Tombola" and item.classification == ItemClassification.progression)
 
 def set_completion_condition (world: APTombolaWorld) -> None:
 
