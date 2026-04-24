@@ -51,7 +51,7 @@ class Rowsanity(Toggle):
     In the case of a Decina, each combination of 2 rows will have its check
     (Default: Disabled)
     """
-    display_name "Rowsanity"
+    display_name = "Rowsanity"
 
 class TombolaStartHints(StartHints):
     """
