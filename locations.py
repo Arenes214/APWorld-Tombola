@@ -102,6 +102,9 @@ def create_all_locations(world: APTombolaWorld) -> None:
     create_regular_locations(world)
     create_events(world)
 
+    if world.options.rowsanity:
+        create_rowsanity_locations(world)
+
 def create_regular_locations(world: APTombolaWorld) -> None:
     # Get the regions
     # Card 1 is index **1** since index 0 will be the starting regions
@@ -125,6 +128,26 @@ def create_regular_locations(world: APTombolaWorld) -> None:
         for card in world.cardsanity_to_lock:
             loc = get_location_names_with_ids([f"Card {card} Unlocked"])
             regions[0].add_locations(loc, APTombolaLocation)
+
+
+def create_rowsanity_locations(world: APTombolaWorld) -> None:
+    # Yes the first part is duplicated code from the regular locations
+    # Get the regions
+    # Card 1 is index **1** since index 0 will be the starting regions
+    regions = []
+    regions.append(world.get_region("The Table"))
+
+    for i in range (1,7):
+        regions.append(world.get_region(f"Card {i}"))
+
+    score_locations = create_all_rowsanity_score_locations()
+
+    for key, value in score_locations.items():
+        region_index = value // 10000
+        loc = get_location_names_with_ids([key])
+        regions[region_index].add_locations(loc, APTombolaLocation)
+
+
 
 def create_events(world: APTombolaWorld) -> None:
     # Get Regions
