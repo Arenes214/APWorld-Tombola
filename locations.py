@@ -18,22 +18,26 @@ CINQUINA_REWARD_COUNT_MAX = 3
 DECINA_REWARD_COUNT_MAX = 3
 TOMBOLA_REWARD_COUNT_MAX = 4
 
-# Location id - Cards will be 5 digit (Format CS00N)
+# Location id - Cards will be 5 digit (Format CSYDN)
 # C indicates Card (e.g. 3xxxx is card 3)
 # S indicates which score it is (2 Ambo, 3 Terno, ..., 6 Decina, 7 Tombola) or special properties:
     # 8 indicates Card Unlock (Cardsanity)
+# Y indicates the kinda of Sanity it is (0 No Sanity, 1 Rowsanity)
+# D indicates the "differentiator" for sanity options (e.g. for Rowsanity 0 is row 1, 1 is row 2)
 # N indicates for multiple score rewards which one it is
 # e.g. 24003 indicates Card 2, Score Quaterna, third reward
+
 
 def all_locations_to_id():
     complete_list = {}
 
-    complete_list.update(create_all_card_score_locations())
+    complete_list.update(create_all_regular_card_score_locations())
     complete_list.update(create_all_cardsanity_unlock_locations())
+    complete_list.update(create_all_rowsanity_score_locations())
 
     return complete_list
 
-def create_all_card_score_locations():
+def create_all_regular_card_score_locations():
     the_list = {}
 
      # Create Card Scoring Locations
@@ -67,6 +71,24 @@ def create_all_cardsanity_unlock_locations():
     return the_list
 
 
+def create_all_rowsanity_score_locations():
+    # differentiators:
+    # 0 - Row 1
+    # 1 - Row 2
+    # 2 - Row 3
+    # For Decina, the differentiator indicates its row plus the one after (wrapping around for Row 3)
+
+    the_list = {}
+    for card in range(6):
+        for row in range(3):
+            the_list[f"Card {card+1} Rowsanity - {row+1} Ambo Reward"] = (10000*(card+1))+2000+(10*row)+1
+            the_list[f"Card {card+1} Rowsanity - {row+1} Terno Reward"] = (10000*(card+1))+3000+(10*row)+1
+            the_list[f"Card {card+1} Rowsanity - {row+1} Quaterna Reward"] = (10000*(card+1))+4000+(10*row)+1
+            the_list[f"Card {card+1} Rowsanity - {row+1} Cinquina Reward"] = (10000*(card+1))+5000+(10*row)+1
+            the_list[f"Card {card+1} Rowsanity - {row+1}/{(row+1)%3} Decina Reward"] = (10000*(card+1))+6000+(10*row)+1
+    return the_list
+
+
 # Create the list with ids to mimic APQuest behaviour
 LOCATION_NAME_TO_ID = all_locations_to_id()
 
@@ -89,8 +111,8 @@ def create_regular_locations(world: APTombolaWorld) -> None:
     for i in range (1,7):
         regions.append(world.get_region(f"Card {i}"))
 
-    # Create the score locations and associate to the region
-    score_locations = create_all_card_score_locations()
+    # Create the REGULAR score locations and associate to the region
+    score_locations = create_all_regular_card_score_locations()
 
     for key, value in score_locations.items():
         region_index = value // 10000
