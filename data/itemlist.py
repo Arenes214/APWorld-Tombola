@@ -98,6 +98,19 @@ fillers = [
     [1001, "Orange Peel"],
 ]
 
+usefuls = [
+    [201, "Free Mark!!!"],
+    [202, "Free Location Hint"],
+    [203, "Anti-Trap Shield"]
+]
+
+traps = [
+    [301, "Blindness Trap"],
+    [302, "Lock Trap"]
+
+]
+
+
 unlocks = [
     [101, "Card 1 Unlock"],
     [102, "Card 2 Unlock"],

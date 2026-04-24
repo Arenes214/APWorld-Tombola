@@ -23,6 +23,12 @@ def all_items_to_id():
     for item in itemlist.unlocks: # Add Cardsanity Unlocks
         the_list[item[1]] = item[0]
 
+    for item in itemlist.usefuls: # Add Usefuls
+        the_list[item[1]] = item[0]
+
+    for item in itemlist.traps: # Add Traps
+        the_list[item[1]] = item[0]
+
     return the_list
 
 def all_default_classifications():
@@ -38,6 +44,12 @@ def all_default_classifications():
     for item in itemlist.unlocks: # Cardsanity unlocks
         classifications[item[1]] = ItemClassification.progression
 
+    for item in itemlist.usefuls: # Usefuls
+        classifications[item[1]] = ItemClassification.useful
+
+    for item in itemlist.traps: # Traps
+        classifications[item[1]] = ItemClassification.trap
+
     return classifications
 
 # Create the lists with ids and classifications to mimic APQuest behaviour
@@ -51,6 +63,10 @@ class APTombolaItem(Item):
 
 def get_random_filler_item_name(world: APTombolaWorld) -> str:
     return "Orange Peel" # TODO actually give a random filler, so far only one exists so it's ok to hardcode it
+
+def create_random_trap(world: APTombolaWorld):
+    traps = ["Blindness Trap","Lock Trap"]
+    return world.create_item(world.random.choice(traps))
 
 def create_item_with_correct_classification(world: APTombolaWorld, name: str) -> APTombolaItem:
     classification = DEFAULT_ITEM_CLASSIFICATIONS[name]
@@ -70,6 +86,25 @@ def create_all_items(world: APTombolaWorld) -> None:
             itempool.append(to_pool)
 
     # TODO filler and other stuff planned
+
+    # Item counts of non-fillers are manually specified
+    if world.options.rowsanity:
+        for i in range(2): # Free Mark
+            to_pool = world.create_item("Free Mark!!!")
+            itempool.append(to_pool)
+        for i in range(4): # Free Location Hint
+            to_pool = world.create_item("Free Location Hint")
+            itempool.append(to_pool)
+        for i in range(3): # Anti-Trap Shield
+            to_pool = world.create_item("Anti-Trap Shield")
+            itempool.append(to_pool)
+        for i in range(10): # Traps
+            to_pool = create_random_trap(world)
+            itempool.append(to_pool)
+        for i in range(71): # Filler
+            item = get_random_filler_item_name(world)
+            to_pool = world.create_item(item)
+            itempool.append(to_pool)
 
     world.multiworld.itempool += itempool
 
