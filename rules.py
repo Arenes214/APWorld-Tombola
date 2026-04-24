@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from BaseClasses import CollectionState
+from BaseClasses import CollectionState, ItemClassification
 from worlds.generic.Rules import add_rule, set_rule
 
 from .data import itemlist
@@ -112,7 +112,7 @@ def set_all_regular_location_rules(world: APTombolaWorld, all_cards) -> None:
 
 def set_all_rowsanity_rules(world: APTombolaWorld, all_cards) -> None:
     # Yes this is duplicated code
-    for loc_name, loc_id in locations.create_all_rowsanity_card_score_locations().items():
+    for loc_name, loc_id in locations.create_all_rowsanity_score_locations().items():
         location = world.get_location(loc_name)
 
         # Set Item Rule for location
@@ -141,18 +141,24 @@ def set_all_rowsanity_rules(world: APTombolaWorld, all_cards) -> None:
 
             match score_type:
                 case 6: # DECINA
-                    set_rule(location, lambda state, actual_rows_l=actual_rows, dis=score_discriminator: state.has_from_list(actual_rows_l[dis], world.player, 5) and state.has_from_list(actual_rows_l[(dis+1)%3], world.player, 5))
+                    other_row = 0
+                    if score_discriminator == 2:
+                        other_row = 1
+                    else:
+                        other_row = score_discriminator + 1
+                    set_rule(location, lambda state, actual_rows_l=actual_rows, dis=score_discriminator, other_row_l = other_row: state.has_from_list(actual_rows_l[dis], world.player, 5) and state.has_from_list(actual_rows_l[other_row_l], world.player, 5))
 
                 case _:
-                    set_rule(location, lambda state, actual_rows_l=actual_rows, n=score_type_int, row_l=score_discriminator: state.has_from_list(actual_rows_l[row_l], world.player, n))
+                    score_type_int = int(score_type)
+                    set_rule(location, lambda state, actual_rows_l=actual_rows, n=score_type_int, dis=score_discriminator: state.has_from_list(actual_rows_l[dis], world.player, n))
 
 
 
 def set_anti_meta_rule(world: APTombolaWorld, location: APTombolaLocation):
         if world.options.prevent_other_meta_game_items:
-            location.item_rule = lambda item: (not item.game != "AP Tombola" and item.classification == ItemClassification.progression) and item.game != "APBingo"
+            location.item_rule = lambda item: (not (item.game != "AP Tombola" and item.classification == ItemClassification.progression) and item.game != "APBingo")
         else:
-            location.item_rule = lambda item: (not item.game != "AP Tombola" and item.classification == ItemClassification.progression)
+            location.item_rule = lambda item: (not (item.game != "AP Tombola" and item.classification == ItemClassification.progression))
 
 def set_completion_condition (world: APTombolaWorld) -> None:
 

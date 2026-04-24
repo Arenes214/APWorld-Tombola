@@ -23,7 +23,7 @@ TOMBOLA_REWARD_COUNT_MAX = 4
 # S indicates which score it is (2 Ambo, 3 Terno, ..., 6 Decina, 7 Tombola) or special properties:
     # 8 indicates Card Unlock (Cardsanity)
 # Y indicates the kinda of Sanity it is (0 No Sanity, 1 Rowsanity)
-# D indicates the "differentiator" for sanity options (e.g. for Rowsanity 0 is row 1, 1 is row 2)
+# D indicates the "discriminator" for sanity options (e.g. for Rowsanity 0 is row 1, 1 is row 2)
 # N indicates for multiple score rewards which one it is
 # e.g. 24003 indicates Card 2, Score Quaterna, third reward
 
@@ -81,11 +81,16 @@ def create_all_rowsanity_score_locations():
     the_list = {}
     for card in range(6):
         for row in range(3):
+            decina_pal = 0
+            if row == 2:
+                decina_pal = 1
+            else:
+                decina_pal = row+2
             the_list[f"Card {card+1} Rowsanity - Row {row+1} Ambo Reward"] = (10000*(card+1))+2000+(10*row)+1
             the_list[f"Card {card+1} Rowsanity - Row {row+1} Terno Reward"] = (10000*(card+1))+3000+(10*row)+1
             the_list[f"Card {card+1} Rowsanity - Row {row+1} Quaterna Reward"] = (10000*(card+1))+4000+(10*row)+1
             the_list[f"Card {card+1} Rowsanity - Row {row+1} Cinquina Reward"] = (10000*(card+1))+5000+(10*row)+1
-            the_list[f"Card {card+1} Rowsanity - Rows {row+1}/{(row+2)%3} Decina Reward"] = (10000*(card+1))+6000+(10*row)+1
+            the_list[f"Card {card+1} Rowsanity - Rows {row+1} & {decina_pal} Decina Reward"] = (10000*(card+1))+6000+(10*row)+1
     return the_list
 
 
