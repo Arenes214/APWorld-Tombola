@@ -17,7 +17,8 @@ class TombolaVictoryCount(Range):
 class PreventOtherMetaGameItems(DefaultOnToggle):
     """
     When enabled, prevents locations in the game from having items from other Meta-Games, such as APBingo.
-    Note: items from AP Tombola games will never be placed in an AP Tombola slot, even if this option is disabled.
+
+    Note: progression items from AP Tombola games will never be placed in an AP Tombola slot, even if this option is disabled.
     (Default: Enabled)
     """
     display_name = "Prevent Other Meta-Game Items"
@@ -43,6 +44,15 @@ class Cardsanity(Range):
 
     default = 0
 
+class Rowsanity(Toggle):
+    """
+    If Rowsanity is enabled, for each row of a Card and for each score type other than Tombola,
+    a location will be created that will require that specific row's numbers to be checked.
+    In the case of a Decina, each combination of 2 rows will have its check
+    (Default: Disabled)
+    """
+    display_name "Rowsanity"
+
 class TombolaStartHints(StartHints):
     """
     Start with these item's locations prefilled into the ``!hint`` command.
@@ -56,6 +66,7 @@ class APTombolaOptions(PerGameCommonOptions):
     prevent_other_meta_game_items: PreventOtherMetaGameItems
     automatic_number_hints: AutomaticNumberHints
     cardsanity: Cardsanity
+    rowsanity: Rowsanity
     start_hints: TombolaStartHints
 
 
@@ -65,6 +76,6 @@ option_groups = [
 
     OptionGroup("Misc Options", [PreventOtherMetaGameItems, AutomaticNumberHints],),
 
-    OptionGroup("Sanity Options", [Cardsanity],),
+    OptionGroup("Sanity Options", [Cardsanity, Rowsanity],),
 ]
 
