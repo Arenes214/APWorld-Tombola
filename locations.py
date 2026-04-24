@@ -85,7 +85,7 @@ def create_all_rowsanity_score_locations():
             the_list[f"Card {card+1} Rowsanity - Row {row+1} Terno Reward"] = (10000*(card+1))+3000+(10*row)+1
             the_list[f"Card {card+1} Rowsanity - Row {row+1} Quaterna Reward"] = (10000*(card+1))+4000+(10*row)+1
             the_list[f"Card {card+1} Rowsanity - Row {row+1} Cinquina Reward"] = (10000*(card+1))+5000+(10*row)+1
-            the_list[f"Card {card+1} Rowsanity - Rows {row+1}/{(row+1)%3} Decina Reward"] = (10000*(card+1))+6000+(10*row)+1
+            the_list[f"Card {card+1} Rowsanity - Rows {row+1}/{(row+2)%3} Decina Reward"] = (10000*(card+1))+6000+(10*row)+1
     return the_list
 
 

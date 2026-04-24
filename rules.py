@@ -17,7 +17,12 @@ def set_all_rules(world: APTombolaWorld) -> None:
     all_cards = world.all_cards
 
     set_all_entrance_rules(world)
-    set_all_location_rules(world, all_cards)
+    set_all_regular_location_rules(world, all_cards)
+
+    if world.options.rowsanity:
+        set_all_rowsanity_rules(world, all_cards)
+
+
     set_completion_condition(world)
 
 
@@ -31,7 +36,7 @@ def set_all_entrance_rules(world: APTombolaWorld) -> None:
 
     return
 
-def set_all_location_rules(world: APTombolaWorld, all_cards) -> None:
+def set_all_regular_location_rules(world: APTombolaWorld, all_cards) -> None:
 
     # Set rules for all Card Score locations
     for loc_name, loc_id in locations.create_all_regular_card_score_locations().items():
@@ -102,6 +107,46 @@ def set_all_location_rules(world: APTombolaWorld, all_cards) -> None:
 
             # Set location rule
             set_rule(location, lambda state, card_l=card: state.has(f"Card {card_l} Unlock", world.player))
+
+
+
+def set_all_rowsanity_rules(world: APTombolaWorld, all_cards) -> None:
+    # Yes this is duplicated code
+    for loc_name, loc_id in locations.create_all_rowsanity_card_score_locations().items():
+        location = world.get_location(loc_name)
+
+        # Set Item Rule for location
+        set_anti_meta_rule(world, location)
+
+        # Get the type of location it is by its ID
+        # TODO This wouldn't work in a future where there are more than 9 cards
+        loc_id_str = str(loc_id)
+        card_id = int(loc_id_str[0]) - 1
+        score_type = int(loc_id_str[1])
+        score_discriminator = int(loc_id_str[3])
+
+        # Get the corresponding card's rows
+        card_rows = all_cards[card_id]
+        actual_rows = []
+
+        # Ignore the zeros and get the item's name
+        for row in card_rows:
+            temp = []
+            for n in row:
+                if not n:
+                    continue
+                actual_item = itemlist.combine_number_name(n, itemlist.numbers[n-1][1])
+                temp.append(actual_item)
+            actual_rows.append(temp)
+
+            match score_type:
+                case 6: # DECINA
+                    set_rule(location, lambda state, actual_rows_l=actual_rows, dis=score_discriminator: state.has_from_list(actual_rows_l[dis], world.player, 5) and state.has_from_list(actual_rows_l[(dis+1)%3], world.player, 5))
+
+                case _:
+                    set_rule(location, lambda state, actual_rows_l=actual_rows, n=score_type_int, row_l=score_discriminator: state.has_from_list(actual_rows_l[row_l], world.player, n))
+
+
 
 def set_anti_meta_rule(world: APTombolaWorld, location: APTombolaLocation):
         if world.options.prevent_other_meta_game_items:
