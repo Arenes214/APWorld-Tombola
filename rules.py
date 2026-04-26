@@ -143,9 +143,9 @@ def set_all_rowsanity_rules(world: APTombolaWorld, all_cards) -> None:
                 case 6: # DECINA
                     other_row = 0
                     if score_discriminator == 3:
-                        other_row = 0
+                        other_row = 1
                     else:
-                        other_row = score_discriminator +1
+                        other_row = score_discriminator + 1
                     set_rule(location, lambda state, actual_rows_l=actual_rows, dis=score_discriminator-1, other_row_l = other_row-1: state.has_from_list(actual_rows_l[dis], world.player, 5) and state.has_from_list(actual_rows_l[other_row_l], world.player, 5))
 
                 case _:
