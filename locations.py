@@ -120,7 +120,7 @@ def create_all_milestone_score_locations():
     # Create all Score Collect locations
     for score_id, score in enumerate(["Ambo","Terno","Quaterna","Cinquina","Decina","Tombola"]):
         for count_id, count in enumerate(["Double","Triple","Quadruple","Quintuple","All of the"]):
-            the_list[f"Milestone - {count} {score}"] = 70000 + 1000 + (score_id+2)*100 + (count_id+1)*10 + 1
+            the_list[f"Milestone - {count} {score}"] = 70000 + 1000 + (score_id+2)*100 + (count_id+2)*10 + 1
 
     # Create all Collection of Numbers
     # TODO for now only Developer Permutations exists
@@ -136,9 +136,11 @@ def create_all_milestone_score_locations():
 
 
     # Create all Even/Odd locations
-    for i in range (20): # 20 is arbitrary, may be increased in future
+    for i in range (1, 21): # 20 is arbitrary, may be increased in future
         the_list[f"Milestone - {i} Even Numbers"] = 70000 + 3000 + 200 + i
         the_list[f"Milestone - {i} Odd Numbers"] = 70000 + 3000 + 100 + i
+
+    return the_list
 
 
 # Create the list with ids to mimic APQuest behaviour
@@ -152,6 +154,7 @@ def get_location_names_with_ids(location_names: list[str]) -> dict[str, int | No
 
 def create_all_locations(world: APTombolaWorld) -> None:
     create_regular_locations(world)
+    create_milestone_locations(world)
     create_events(world)
 
     if world.options.rowsanity:
@@ -199,10 +202,15 @@ def create_rowsanity_locations(world: APTombolaWorld) -> None:
         regions[region_index].add_locations(loc, APTombolaLocation)
 
 def create_milestone_locations(world: APTombolaWorld) -> None:
+    milestone_region = world.get_region("Milestones")
 
+    all_score_locations = create_all_milestone_score_locations()
+    selected_score_locations = {}
 
-
-
+    # Select only a few of them
+    for elem in world.random.sample(list(all_score_locations.items()), 18):
+        loc = get_location_names_with_ids([elem[0]])
+        milestone_region.add_locations(loc, APTombolaLocation)
 
 
 
