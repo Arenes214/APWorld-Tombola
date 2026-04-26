@@ -85,9 +85,27 @@ def create_all_items(world: APTombolaWorld) -> None:
             to_pool = world.create_item(f"Card {card} Unlock")
             itempool.append(to_pool)
 
-    # TODO filler and other stuff planned
-
     # Item counts of non-fillers are manually specified
+    # MILESTONES
+    for i in range(1): # Yes it seems dumb, i just have it like this in case i change my mind and wanna add more
+        to_pool = world.create_item("Free Mark!!!")
+        itempool.append(to_pool)
+    for i in range(2):
+        to_pool = world.create_item("Free Location Hint")
+        itempool.append(to_pool)
+    for i in range(2):
+        to_pool = world.create_item("Anti-Trap Shield")
+        itempool.append(to_pool)
+    for i in range(4):
+        to_pool = create_random_trap(world)
+        itempool.append(to_pool)
+    for i in range(9):
+        item = get_random_filler_item_name(world)
+        to_pool = world.create_item(item)
+        itempool.append(to_pool)
+
+
+    # ROWSANITY
     if world.options.rowsanity:
         for i in range(2): # Free Mark
             to_pool = world.create_item("Free Mark!!!")

@@ -9,6 +9,8 @@ from .options import TombolaStartHints
 from . import options as aptombola_options
 from .data import itemlist
 
+from BaseClasses import CollectionState, Item
+
 class APTombolaWorld(World):
     """
     AP Tombola is an AP implementation of Tombola, an italian bingo game dating back to 1734
@@ -30,6 +32,24 @@ class APTombolaWorld(World):
 
     cardsanity_to_lock = []
     all_cards = []
+    milestones_chosen = []
+
+    def collect(self, state: CollectionState, item: Item) -> bool:
+        change = super().collect(state, item)
+        if item.code is not None:
+            if change and item.code >=1 and item.code <= 90:
+                state.aptombola_total_count[self.player] += item.code
+        return change
+
+    def remove(self, state: CollectionState, item: Item) -> bool:
+        change = super().remove(state, item)
+        if not (item.code is None):
+            if change and item.code >= 1 and item.code <= 90:
+                state.aptombola_total_count[self.player] -= item.code
+        return change
+
+
+
 
     def generate_early(self) -> None:
         # Forge ProgBal to 0
@@ -66,8 +86,12 @@ class APTombolaWorld(World):
             self.options.start_hints = TombolaStartHints(to_hint)
 
         # Create the Cards
-        self.all_cards.clear() # Preemptive clear to avoid the fuzzer shitting itself again
+        self.all_cards.clear()
         self.all_cards = cards.generate_cards(self)
+
+        # Choose Milestones
+        self.milestones_chosen.clear()
+        self.milestones_chosen = locations.choose_milestone_locations(self)
 
 
     def create_regions(self) -> None:

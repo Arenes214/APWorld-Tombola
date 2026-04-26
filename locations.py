@@ -123,10 +123,11 @@ def create_all_milestone_score_locations():
             the_list[f"Milestone - {count} {score}"] = 70000 + 1000 + (score_id+2)*100 + (count_id+2)*10 + 1
 
     # Create all Collection of Numbers
-    # TODO for now only Developer Permutations exists
+    # TODO for now only a select hardcoded Permutations exists
     the_list["Milestone - Developer Permutations"] = 70000 + 2000 + 1
     the_list["Milestone - Nice."] = 70000 + 2000 + 2
     the_list["Milestone -  The Meaning of Life"] = 70000 + 2000 + 3
+    the_list["Milestone - The Golden Choice"] = 70000 + 2000 + 4
 
     # Create all Total Count locations
     # TODO for now only a select hardcoded amount of Total Counts exists
@@ -154,7 +155,7 @@ def get_location_names_with_ids(location_names: list[str]) -> dict[str, int | No
 
 def create_all_locations(world: APTombolaWorld) -> None:
     create_regular_locations(world)
-    create_milestone_locations(world)
+    create_milestone_locations(world, world.milestones_chosen)
     create_events(world)
 
     if world.options.rowsanity:
@@ -201,15 +202,18 @@ def create_rowsanity_locations(world: APTombolaWorld) -> None:
         loc = get_location_names_with_ids([key])
         regions[region_index].add_locations(loc, APTombolaLocation)
 
-def create_milestone_locations(world: APTombolaWorld) -> None:
-    milestone_region = world.get_region("Milestones")
+def choose_milestone_locations(world: APTombolaWorld):
 
     all_score_locations = create_all_milestone_score_locations()
-    selected_score_locations = {}
 
-    # Select only a few of them
-    for elem in world.random.sample(list(all_score_locations.items()), 18):
-        loc = get_location_names_with_ids([elem[0]])
+    return world.random.sample(list(all_score_locations.items()), 18)
+
+def create_milestone_locations(world: APTombolaWorld, chosen) -> None:
+    milestone_region = world.get_region("Milestones")
+
+    for milestone in chosen:
+        print(milestone[0])
+        loc = get_location_names_with_ids([milestone[0]])
         milestone_region.add_locations(loc, APTombolaLocation)
 
 

@@ -3,7 +3,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from BaseClasses import CollectionState, ItemClassification
+from BaseClasses import CollectionState, ItemClassification, MultiWorld
+from worlds.AutoWorld import LogicMixin
 from worlds.generic.Rules import add_rule, set_rule
 
 from .data import itemlist
@@ -12,11 +13,29 @@ from . import cards, locations
 if TYPE_CHECKING:
     from .world import APTombolaWorld
 
+class APTombolaTotalCount(LogicMixin):
+    aptombola_total_count: dict[int, set[str]]
+
+    def init_mixin(self, multiworld: Multiworld) -> None:
+        self.aptombola_total_count = {
+            player: 0 for player in multiworld.get_game_players("AP Tombola")
+        }
+
+    def copy_mixin(self, new_state: CollectionState) -> CollectionState:
+        new_state.aptombola_total_count = {
+            player: count for player, count in self.aptombola_total_count.items()
+        }
+        return new_state
+
+
+
+
 def set_all_rules(world: APTombolaWorld) -> None:
 
     all_cards = world.all_cards
 
     set_all_entrance_rules(world)
+    set_all_milestone_rules(world, all_cards)
     set_all_regular_location_rules(world, all_cards)
 
     if world.options.rowsanity:
@@ -151,6 +170,24 @@ def set_all_rowsanity_rules(world: APTombolaWorld, all_cards) -> None:
                 case _:
                     score_type_int = int(score_type)
                     set_rule(location, lambda state, actual_rows_l=actual_rows, n=score_type_int, dis=score_discriminator-1: state.has_from_list(actual_rows_l[dis], world.player, n))
+
+
+def set_all_milestone_rules(world: APTombolaWorld, all_cards):
+    for loc_name, loc_id in world.milestones_chosen:
+        print(f"{loc_name} and {loc_id}")
+        location = world.get_location(loc_name)
+
+        # Set Item Rule for location
+        set_anti_meta_rule(world, location)
+
+        loc_id_str = str(loc_id)
+        if (int(loc_id_str[0])) == 8: # Total Count
+            print("hitting total count")
+            target = loc_id - 80000
+            print(f"outside it's ")
+            set_rule(location, lambda state, target_l = target: state.aptombola_total_count[world.player] >= target_l)
+
+
 
 
 
