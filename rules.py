@@ -282,6 +282,10 @@ def set_completion_condition (world: APTombolaWorld) -> None:
     tombola_count_reached_loc = world.get_location("EVENT: Tombola Count Requirement Reached")
     set_rule(tombola_count_reached_loc, lambda state, c=tombola_goal_count: state.count("Tombola Scored", world.player) >= c)
 
+    milestone_goal_count = world.options.milestone_victory_count
+    milestone_count_reached_loc = world.get_location("EVENT: Milestone Count Requirement Reached")
+    set_rule(milestone_count_reached_loc, lambda state, c=milestone_goal_count: state.count("Milestone Achieved", world.player) >= c)
+
     # Set Goal condition
     world.multiworld.completion_condition[world.player] = lambda state: state.count("Victory Token", world.player) >= 2
 
