@@ -259,9 +259,8 @@ def set_all_milestone_rules(world: APTombolaWorld, all_cards):
 
             case 4: # Even/Odd
                 even_or_odd = int(loc_id_str[2]) % 2
-                print(f"even or odd is {even_or_odd}")
                 target = (int(loc_id_str[3])*10) + int(loc_id_str[4])
-                print(f"target is {target}")
+
                 if even_or_odd == 1: #
                     set_rule(location, lambda state, target_l=target: state.aptombola_odd_count[world.player] >= target_l)
                     set_rule(event_location, lambda state, target_l=target: state.aptombola_odd_count[world.player] >= target_l)
