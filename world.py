@@ -7,7 +7,7 @@ from Options import ProgressionBalancing
 from . import items, locations, regions, rules, cards, web_world
 from .options import TombolaStartHints
 from . import options as aptombola_options
-from .data import itemlist
+from .data import itemlist, milestonelist
 
 from BaseClasses import CollectionState, Item
 
@@ -134,6 +134,10 @@ class APTombolaWorld(World):
         to_send["Cards"] = self.all_cards
 
         to_send["All Milestones"] = locations.create_all_milestone_score_locations()
+
+        to_send["All Collection of Numbers Milestones"] = milestonelist.collections
+        to_send["All Total Count Milestones"] = milestonelist.total_counts # these 2 i have to do to also get the "targets"
+
         to_send["Milestones Chosen"] = self.milestones_chosen
 
         if self.options.cardsanity:
