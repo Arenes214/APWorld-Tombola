@@ -133,10 +133,13 @@ class APTombolaWorld(World):
         to_send = {}
         to_send["Cards"] = self.all_cards
 
+        to_send["All Milestones"] = locations.create_all_milestone_score_locations()
+        to_send["Milestones Chosen"] = self.milestones_chosen
+
         if self.options.cardsanity:
             to_send["Cards Locked"] = self.cardsanity_to_lock
 
-        to_send.update(self.options.as_dict("tombola_victory_count","cardsanity"))
+        to_send.update(self.options.as_dict("tombola_victory_count","milestone_victory_count","cardsanity"))
 
         return to_send
 
