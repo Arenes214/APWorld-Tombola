@@ -96,10 +96,9 @@ def create_all_rowsanity_score_locations():
     return the_list
 
 
-# For Milestones, Locations id are as following (Format MTABC)
+# For Milestones, Locations id are as following (Format 7TABC)
 # M Indicates:
-# 7 is Milestones in general
-# 8 is Total Count Milestones, since they may need more than 999 index
+# 7 is Milestones
 
 # T indicates Type: 1 is Score Collect, 2 is Collection of Numbers, 3 is total count, 4 is Even/Odd
 
@@ -217,21 +216,29 @@ def create_events(world: APTombolaWorld) -> None:
     # Get Regions
     starting_region = world.get_region("The Table")
 
-    # Create Event Items
-    victory_item_tombola = items.APTombolaItem("Tombola Scored", ItemClassification.progression, None, world.player)
+    scores = ["Ambo","Terno","Quaterna","Cinquina","Decina","Tombola"]
+    # Create Tombola Scored Items
+
+    victory_items = []
+    for score in scores:
+        victory_items.append(items.APTombolaItem(f"{score} Scored", ItemClassification.progression, None, world.player)
 
     # Create Tombola Events for goal tracking
     for i in range(6):
         # Get the region
         region = world.get_region(f"Card {i+1}")
 
-        # Create Location and set item to it
-        event_location = APTombolaLocation(world.player, f"EVENT: Card {i+1} - Tombola Scored", None, region)
-        event_location.place_locked_item(victory_item_tombola)
-        region.locations.append(event_location)
+        # Create Location and set item to it for each score
+        for idx,score in enumerate(scores):
+            event_location = APTombolaLocation(world.player, f"EVENT: Card {i+1} - {score} Scored", None, region)
+            event_location.place_locked_item(victory_item[idx])
+            region.locations.append(event_location)
+
+
 
     # Create "Goal requirement fullfilled" location
     starting_region.add_event("EVENT: Tombola Count Requirement Reached", "Victory Token", location_type=APTombolaLocation, item_type=items.APTombolaItem)
+    starting_region.add_event("EVENT: Milestone Count Requirement Reached", "Victory Token", location_type=APTombolaLocation, item_type=items.APTombolaItem)
 
 
 

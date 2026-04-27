@@ -7,7 +7,7 @@ from BaseClasses import CollectionState, ItemClassification, MultiWorld
 from worlds.AutoWorld import LogicMixin
 from worlds.generic.Rules import add_rule, set_rule
 
-from .data import itemlist
+from .data import itemlist, milestonelist
 from . import cards, locations
 
 if TYPE_CHECKING:
@@ -174,18 +174,21 @@ def set_all_rowsanity_rules(world: APTombolaWorld, all_cards) -> None:
 
 def set_all_milestone_rules(world: APTombolaWorld, all_cards):
     for loc_name, loc_id in world.milestones_chosen:
-        print(f"{loc_name} and {loc_id}")
         location = world.get_location(loc_name)
 
         # Set Item Rule for location
         set_anti_meta_rule(world, location)
 
         loc_id_str = str(loc_id)
-        if (int(loc_id_str[0])) == 8: # Total Count
-            print("hitting total count")
-            target = loc_id - 80000
-            print(f"outside it's ")
-            set_rule(location, lambda state, target_l = target: state.aptombola_total_count[world.player] >= target_l)
+        score_type = loc_id_str[1]
+
+        match score_type:
+            case 3:
+                target = 0
+                for item in milestonelist.total_counts:
+                    if item[0] == loc_name:
+                        target = item[2]
+                set_rule(location, lambda state, target_l = target: state.aptombola_total_count[world.player] >= target_l)
 
 
 
