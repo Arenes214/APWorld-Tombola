@@ -206,7 +206,6 @@ def create_milestone_locations(world: APTombolaWorld, chosen) -> None:
     milestone_region = world.get_region("Milestones")
 
     for milestone in chosen:
-        print(milestone[0])
         loc = get_location_names_with_ids([milestone[0]])
         milestone_region.add_locations(loc, APTombolaLocation)
 
@@ -217,8 +216,8 @@ def create_events(world: APTombolaWorld) -> None:
     starting_region = world.get_region("The Table")
 
     scores = ["Ambo","Terno","Quaterna","Cinquina","Decina","Tombola"]
-    # Create Tombola Scored Items
 
+    # Create (Score) Scored Items
     victory_items = []
     for score in scores:
         victory_items.append(items.APTombolaItem(f"{score} Scored", ItemClassification.progression, None, world.player)
@@ -234,6 +233,14 @@ def create_events(world: APTombolaWorld) -> None:
             event_location.place_locked_item(victory_item[idx])
             region.locations.append(event_location)
 
+    # Create Milestone Events
+    milestone_region = world.get_region("Milestones")
+    milestone_token = items.APTombolaItem("Milestone Achieved", ItemClassification.progression, None, world.player)
+
+    for milestone in world.milestones_chosen:
+        event_location = APTombolaLocation(world.player, f"EVENT: {milestone} Achieved", None, region)
+        event_location.place_locked_item(milestone_token)
+        milestone_region.append(event_location)
 
 
     # Create "Goal requirement fullfilled" location

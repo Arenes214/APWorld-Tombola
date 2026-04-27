@@ -39,6 +39,11 @@ class APTombolaWorld(World):
         if item.code is not None:
             if change and item.code >=1 and item.code <= 90:
                 state.aptombola_total_count[self.player] += item.code
+
+                if item.code % 2 == 0:
+                    state.aptombola_even_count[self.player] += 1
+                else:
+                    state.aptombola_odd_count[self.player] += 1
         return change
 
     def remove(self, state: CollectionState, item: Item) -> bool:
@@ -46,6 +51,11 @@ class APTombolaWorld(World):
         if not (item.code is None):
             if change and item.code >= 1 and item.code <= 90:
                 state.aptombola_total_count[self.player] -= item.code
+
+                if item.code % 2 == 0:
+                    state.aptombola_even_count[self.player] -= 1
+                else:
+                    state.aptombola_odd_count[self.player] -= 1
         return change
 
 

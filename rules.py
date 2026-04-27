@@ -15,16 +15,36 @@ if TYPE_CHECKING:
 
 class APTombolaTotalCount(LogicMixin):
     aptombola_total_count: dict[int, set[str]]
+    aptombola_even_count: dict[int, set[str]]
+    aptombola_odd_count: dict[int, set[str]]
 
     def init_mixin(self, multiworld: Multiworld) -> None:
         self.aptombola_total_count = {
             player: 0 for player in multiworld.get_game_players("AP Tombola")
         }
 
+        self.aptombola_even_count = {
+            player: 0 for player in multiworld.get_game_players("AP Tombola")
+        }
+
+        self.aptombola_odd_count = {
+            player: 0 for player in multiworld.get_game_players("AP Tombola")
+        }
+
+
     def copy_mixin(self, new_state: CollectionState) -> CollectionState:
         new_state.aptombola_total_count = {
             player: count for player, count in self.aptombola_total_count.items()
         }
+
+        new_state.aptombola_even_count = {
+            player: count for player, count in self.aptombola_even_count.items()
+        }
+
+        new_state.aptombola_odd_count = {
+            player: count for player, count in self.aptombola_odd_count.items()
+        }
+
         return new_state
 
 
@@ -89,8 +109,18 @@ def set_all_regular_location_rules(world: APTombolaWorld, all_cards) -> None:
         match score_type:
             case 6:
                 # Decina Function
-                # This is probably dumb but it should at least work
+                # This is dumb but it should at least work
                 set_rule(location, lambda state, actual_rows_l=actual_rows: (state.has_from_list(actual_rows_l[0], world.player, 5)
+                                                  and state.has_from_list(actual_rows_l[1], world.player, 5)
+                                                  or state.has_from_list(actual_rows_l[0], world.player, 5)
+                                                  and state.has_from_list(actual_rows_l[2], world.player, 5)
+                                                  or state.has_from_list(actual_rows_l[1], world.player, 5)
+                                                  and state.has_from_list(actual_rows_l[2], world.player, 5)),
+                         )
+
+                # Set rule for Decina Event
+                event_location = world.get_location(f"EVENT: Card {card_id+1} - Decina Scored")
+                set_rule(event_location, lambda state, actual_rows_l=actual_rows: (state.has_from_list(actual_rows_l[0], world.player, 5)
                                                   and state.has_from_list(actual_rows_l[1], world.player, 5)
                                                   or state.has_from_list(actual_rows_l[0], world.player, 5)
                                                   and state.has_from_list(actual_rows_l[2], world.player, 5)
@@ -104,7 +134,8 @@ def set_all_regular_location_rules(world: APTombolaWorld, all_cards) -> None:
                     for n in row:
                         single_list.append(n)
                 set_rule(location, lambda state, single_list_l=single_list: state.has_all(single_list_l, world.player))
-                # Also set rule of Tombola Event
+
+                # Set rule of Tombola Event
                 event_location = world.get_location(f"EVENT: Card {card_id+1} - Tombola Scored")
                 set_rule(event_location, lambda state, single_list_l=single_list: state.has_all(single_list_l, world.player))
 
@@ -112,6 +143,17 @@ def set_all_regular_location_rules(world: APTombolaWorld, all_cards) -> None:
                 # Ambo through Cinquina can be made in the same function
                 score_type_int = int(score_type)
                 set_rule(location, lambda state, actual_rows_l=actual_rows, n=score_type_int: (state.has_from_list(actual_rows_l[0], world.player, n)
+                                                  or state.has_from_list(actual_rows_l[1], world.player, n)
+                                                  or state.has_from_list(actual_rows_l[2], world.player, n)),
+                        )
+
+                # Set rule for Event
+                all_possible_scores = ["Ambo","Terno","Quaterna","Cinquina"]
+                score_name = all_possible_scores[score_type_int-2]
+
+                event_location = world.get_location(f"EVENT: Card {card_id+1} - {score_name} Scored")
+
+                set_rule(event_location, lambda state, actual_rows_l=actual_rows, n=score_type_int: (state.has_from_list(actual_rows_l[0], world.player, n)
                                                   or state.has_from_list(actual_rows_l[1], world.player, n)
                                                   or state.has_from_list(actual_rows_l[2], world.player, n)),
                         )
@@ -173,9 +215,10 @@ def set_all_rowsanity_rules(world: APTombolaWorld, all_cards) -> None:
 
 
 def set_all_milestone_rules(world: APTombolaWorld, all_cards):
+    all_scores = ["Ambo","Terno","Quaterna","Cinquina","Decina","Tombola"]
     for loc_name, loc_id in world.milestones_chosen:
         location = world.get_location(loc_name)
-
+        event_location = world.get_location(f"EVENT: {loc_name} Achieved")
         # Set Item Rule for location
         set_anti_meta_rule(world, location)
 
@@ -183,16 +226,46 @@ def set_all_milestone_rules(world: APTombolaWorld, all_cards):
         score_type = loc_id_str[1]
 
         match score_type:
-            case 3:
+            case 1: # Score Collect
+                score_type_id = loc_id_str[2]
+                score_type = all_scores[int(loc_id_str)-2]
+                score_count = loc_id_str[3]
+                set_rule(location, lambda state, count_l=int(score_count),score_l=score_type: state.count(f"{score_l} Scored", world.player) >= count_l)
+
+                # Set Rule for Event
+                set_rule(event_location, lambda state, count_l=int(score_count),score_l=score_type: state.count(f"{score_l} Scored", world.player) >= count_l)
+
+            case 2: # Collections of Numbers
+                numbers = []
+                for item in milestonelist.collections:
+                    if item[0] == loc_name:
+                        numbers.extend(item[2])
+                        break
+                set_rule(location, lambda state, numbers_l=numbers: state.has_all(numbers_l, world.player))
+
+                # Set Rule for Event
+                set_rule(event_location, lambda state, numbers_l=numbers: state.has_all(numbers_l, world.player))
+
+
+            case 3: # Total Count
                 target = 0
                 for item in milestonelist.total_counts:
                     if item[0] == loc_name:
                         target = item[2]
+                        break
                 set_rule(location, lambda state, target_l = target: state.aptombola_total_count[world.player] >= target_l)
 
+                # Event
+                set_rule(event_location, lambda state, target_l = target: state.aptombola_total_count[world.player] >= target_l)
 
-
-
+            case 4: # Even/Odd
+                even_or_odd = int(loc_id_str[2]) % 2
+                target = (int(loc_id_str[3])*10) + int(loc_id_str[4])
+                if even_or_odd: # Remember that even_or_odd is 1 if it's **odd**
+                    set_rule(location, lambda state, target_l=target: state.aptombola_odd_count[world.player] >= target_l)
+                    set_rule(event_location, lambda state, target_l=target: state.aptombola_odd_count[world.player] >= target_l)
+                else:
+                    set_rule(event_location, lambda state, target_l=target: state.aptombola_even_count[world.player] >= target_l)
 
 def set_anti_meta_rule(world: APTombolaWorld, location: APTombolaLocation):
         if world.options.prevent_other_meta_game_items:
