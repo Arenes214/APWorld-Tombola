@@ -131,9 +131,9 @@ def create_all_milestone_score_locations():
         the_list[item[0]] = item[1]
 
     # Create all Even/Odd locations
-    for i in range (1, 21): # 20 is arbitrary, may be increased in future
-        the_list[f"Milestone - {i} Even Numbers"] = 70000 + 3000 + 200 + i
-        the_list[f"Milestone - {i} Odd Numbers"] = 70000 + 3000 + 100 + i
+    for i in range (4, 21): # bounds are arbitrary, may be increased in future
+        the_list[f"Milestone - {i} Even Numbers"] = 70000 + 4000 + 200 + i
+        the_list[f"Milestone - {i} Odd Numbers"] = 70000 + 4000 + 100 + i
 
     return the_list
 
@@ -220,7 +220,7 @@ def create_events(world: APTombolaWorld) -> None:
     # Create (Score) Scored Items
     victory_items = []
     for score in scores:
-        victory_items.append(items.APTombolaItem(f"{score} Scored", ItemClassification.progression, None, world.player)
+        victory_items.append(items.APTombolaItem(f"{score} Scored", ItemClassification.progression, None, world.player))
 
     # Create Tombola Events for goal tracking
     for i in range(6):
@@ -230,7 +230,7 @@ def create_events(world: APTombolaWorld) -> None:
         # Create Location and set item to it for each score
         for idx,score in enumerate(scores):
             event_location = APTombolaLocation(world.player, f"EVENT: Card {i+1} - {score} Scored", None, region)
-            event_location.place_locked_item(victory_item[idx])
+            event_location.place_locked_item(victory_items[idx])
             region.locations.append(event_location)
 
     # Create Milestone Events
@@ -238,9 +238,9 @@ def create_events(world: APTombolaWorld) -> None:
     milestone_token = items.APTombolaItem("Milestone Achieved", ItemClassification.progression, None, world.player)
 
     for milestone in world.milestones_chosen:
-        event_location = APTombolaLocation(world.player, f"EVENT: {milestone} Achieved", None, region)
+        event_location = APTombolaLocation(world.player, f"EVENT: {milestone[0]} Achieved", None, region)
         event_location.place_locked_item(milestone_token)
-        milestone_region.append(event_location)
+        milestone_region.locations.append(event_location)
 
 
     # Create "Goal requirement fullfilled" location

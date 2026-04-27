@@ -10,7 +10,7 @@ total_counts = [
     ["Milestone - Developer Count", 73001, 214],
     ["Milestone - Developer Count x10", 73002, 2140],
     ["Milestone - Erbs told me this number", 73003, 690],
-    ["Milestone - Useless Calculations", 73004, 529], # TODO wait for Useless consent
+    ["Milestone - Useless Calculations", 73004, 529],
     ["Milestone - Golden's Count", 73005, 789],
 
 

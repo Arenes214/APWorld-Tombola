@@ -47,9 +47,6 @@ class APTombolaTotalCount(LogicMixin):
 
         return new_state
 
-
-
-
 def set_all_rules(world: APTombolaWorld) -> None:
 
     all_cards = world.all_cards
@@ -225,10 +222,10 @@ def set_all_milestone_rules(world: APTombolaWorld, all_cards):
         loc_id_str = str(loc_id)
         score_type = loc_id_str[1]
 
-        match score_type:
+        match int(score_type):
             case 1: # Score Collect
-                score_type_id = loc_id_str[2]
-                score_type = all_scores[int(loc_id_str)-2]
+                score_type_id = int(loc_id_str[2])
+                score_type = all_scores[score_type_id-2]
                 score_count = loc_id_str[3]
                 set_rule(location, lambda state, count_l=int(score_count),score_l=score_type: state.count(f"{score_l} Scored", world.player) >= count_l)
 
@@ -239,8 +236,10 @@ def set_all_milestone_rules(world: APTombolaWorld, all_cards):
                 numbers = []
                 for item in milestonelist.collections:
                     if item[0] == loc_name:
-                        numbers.extend(item[2])
-                        break
+                        for idx in item[2]:
+                            actual_item = itemlist.combine_number_name(idx, itemlist.numbers[idx-1][1])
+                            numbers.append(actual_item)
+
                 set_rule(location, lambda state, numbers_l=numbers: state.has_all(numbers_l, world.player))
 
                 # Set Rule for Event
@@ -260,11 +259,14 @@ def set_all_milestone_rules(world: APTombolaWorld, all_cards):
 
             case 4: # Even/Odd
                 even_or_odd = int(loc_id_str[2]) % 2
+                print(f"even or odd is {even_or_odd}")
                 target = (int(loc_id_str[3])*10) + int(loc_id_str[4])
-                if even_or_odd: # Remember that even_or_odd is 1 if it's **odd**
+                print(f"target is {target}")
+                if even_or_odd == 1: #
                     set_rule(location, lambda state, target_l=target: state.aptombola_odd_count[world.player] >= target_l)
                     set_rule(event_location, lambda state, target_l=target: state.aptombola_odd_count[world.player] >= target_l)
                 else:
+                    set_rule(location, lambda state, target_l=target: state.aptombola_even_count[world.player] >= target_l)
                     set_rule(event_location, lambda state, target_l=target: state.aptombola_even_count[world.player] >= target_l)
 
 def set_anti_meta_rule(world: APTombolaWorld, location: APTombolaLocation):
@@ -281,7 +283,7 @@ def set_completion_condition (world: APTombolaWorld) -> None:
     set_rule(tombola_count_reached_loc, lambda state, c=tombola_goal_count: state.count("Tombola Scored", world.player) >= c)
 
     # Set Goal condition
-    world.multiworld.completion_condition[world.player] = lambda state: state.has("Victory Token", world.player)
+    world.multiworld.completion_condition[world.player] = lambda state: state.count("Victory Token", world.player) >= 2
 
 
 
