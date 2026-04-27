@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 from BaseClasses import ItemClassification, Location
 
 from . import items
+from .data import milestonelist
 
 if TYPE_CHECKING:
     from .world import APTombolaWorld
@@ -100,7 +101,7 @@ def create_all_rowsanity_score_locations():
 # 7 is Milestones in general
 # 8 is Total Count Milestones, since they may need more than 999 index
 
-# T indicates Type: 1 is Score Collect, 2 is Collection of Numbers,, 3 is Even/Odd
+# T indicates Type: 1 is Score Collect, 2 is Collection of Numbers, 3 is total count, 4 is Even/Odd
 
 # For Score Collect
 # A indicates which score it is (2 Ambo, 3 Terno...)
@@ -108,10 +109,10 @@ def create_all_rowsanity_score_locations():
 # C is 1
 
 # For Collection of Numbers
-# TODO A list will exists that contains all possible Collections
 # The format will just be based on the list
 
 # For Total Count, TABC will indicate the count to reach
+# The format will just be based on the list
 
 # For Even/Odd, A indicates Even(2) or Odd(1), BC indicates the count
 
@@ -123,18 +124,12 @@ def create_all_milestone_score_locations():
             the_list[f"Milestone - {count} {score}"] = 70000 + 1000 + (score_id+2)*100 + (count_id+2)*10 + 1
 
     # Create all Collection of Numbers
-    # TODO for now only a select hardcoded Permutations exists
-    the_list["Milestone - Developer Permutations"] = 70000 + 2000 + 1
-    the_list["Milestone - Nice."] = 70000 + 2000 + 2
-    the_list["Milestone -  The Meaning of Life"] = 70000 + 2000 + 3
-    the_list["Milestone - The Golden Choice"] = 70000 + 2000 + 4
+    for item in milestonelist.collections:
+        the_list[item[0]] = item[1]
 
     # Create all Total Count locations
-    # TODO for now only a select hardcoded amount of Total Counts exists
-    the_list["Milestone - Developer Count"] = 80000 + 214
-    the_list["Milestone - Developer Count x10"] = 80000 + 2140
-    the_list["Milestone - Erbs told me this number"] = 80000 + 690
-
+    for item in milestonelist.total_counts:
+        the_list[item[0]] = item[1]
 
     # Create all Even/Odd locations
     for i in range (1, 21): # 20 is arbitrary, may be increased in future
