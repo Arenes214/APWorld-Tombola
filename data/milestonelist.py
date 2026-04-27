@@ -4,6 +4,9 @@ collections = [
     ["Milestone - The Meaning of Life", 72003, [42]],
     ["Milestone - Golden's Choice", 72004, [45]],
     ["Milestone - Mysterious Trio", 72005, [47,26,64]],
+    ["Milestone - The Greatest Expeditions", 72006, [33,60]],
+    ["Milestone - Dad's Choice", 72007, [11]],
+    ["Milestone - Go Play Multiarchi", 72008, [5]],
 ]
 
 total_counts = [
@@ -12,9 +15,5 @@ total_counts = [
     ["Milestone - Erbs told me this number", 73003, 690],
     ["Milestone - Useless Calculations", 73004, 529],
     ["Milestone - Golden's Count", 73005, 789],
-
-
-
-
-
+    ["Milestone - Not so Mysterious Choice", 73006, 1024],
 ]
