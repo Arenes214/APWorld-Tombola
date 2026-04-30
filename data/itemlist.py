@@ -95,8 +95,37 @@ def combine_number_name(number, name):
     return f"{number} - {name}"
 
 fillers = [
-    [1001, "Orange Peel"],
+    [1001, "Piece of Orange Peel"],
+    [1002, "Painfully Average Christmas Present"],
+    [1003, "Oggetto in Italiano"],
+    [1004, "Broken Number"],
+    [1005, "an item name that, despite not being intended to be longer than that one item with a ridiculously long name, is nevertheless pointlessly long so that all game clients must be able to handle items with such profusely articulate names."],
+    [1006, "half-eaten Plate"],
+    [1007, "kid screaming about a Nintendo 64 or something"],
+    [1008, ":mhammer:"],
+    [1009, "rejected filler item name"],
+    [1010, "merc request"],
+    [1011, "reminder to go play Multiarchi"],
+    [1012, "way over the top Fireworks Show for New Year's"],
+    [1013, "Pandoro"],
+    [1014, "Panettone"],
+    [1015, "particularly terrible Cinepanettone (...not like one *could* be good)"],
+    [1016, "Christmas Card from your uncle"],
+    [1017, "50€"],
 ]
+
+usefuls = [
+    [201, "Free Mark!!!"],
+    [202, "Free Location Hint"],
+    [203, "Anti-Trap Shield"]
+]
+
+traps = [
+    [301, "Blindness Trap"],
+    [302, "Lock Trap"]
+
+]
+
 
 unlocks = [
     [101, "Card 1 Unlock"],

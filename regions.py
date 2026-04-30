@@ -21,6 +21,9 @@ def create_all_regions(world: APTombolaWorld) -> None:
         reg = Region(f"Card {i+1}", world.player, world.multiworld)
         regions.append(reg)
 
+    milestone_region = Region("Milestones", world.player, world.multiworld)
+    regions.append(milestone_region)
+
     world.multiworld.regions += regions
 
 
@@ -30,3 +33,6 @@ def connect_regions(world: APTombolaWorld) -> None:
     for i in range (6):
         card = world.get_region(f"Card {i+1}")
         start_region.connect(card, f"Look at Card {i+1}")
+
+    milestone_region = world.get_region("Milestones")
+    start_region.connect(milestone_region, "Look at Milestones")
