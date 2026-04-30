@@ -62,7 +62,8 @@ class APTombolaItem(Item):
 
 
 def get_random_filler_item_name(world: APTombolaWorld) -> str:
-    return "Orange Peel" # TODO actually give a random filler, so far only one exists so it's ok to hardcode it
+    item = world.random.choice(itemlist.fillers)
+    return item[1]
 
 def create_random_trap(world: APTombolaWorld):
     traps = ["Blindness Trap","Lock Trap"]
@@ -80,10 +81,23 @@ def create_all_items(world: APTombolaWorld) -> None:
         to_pool = world.create_item(itemlist.combine_number_name(item[0],item[1]))
         itempool.append(to_pool)
 
-    if world.options.cardsanity:
-        for card in world.cardsanity_to_lock:
-            to_pool = world.create_item(f"Card {card} Unlock")
-            itempool.append(to_pool)
+    locks = [1,2,3,4,5,6]
+    world.random.shuffle(locks)
+    to_lock = world.options.cardsanity
+
+    while to_lock:
+        to_lock -= 1
+        c = locks.pop()
+        to_pool = world.create_item(f"Card {c} Unlock")
+        itempool.append(to_pool)
+
+    for c in locks:
+        to_precollect = world.create_item(f"Card {c} Unlock")
+        world.push_precollected(to_precollect)
+        item = get_random_filler_item_name(world)
+        to_pool = world.create_item(item)
+        itempool.append(to_pool)
+
 
     # Item counts of non-fillers are manually specified
     # MILESTONES

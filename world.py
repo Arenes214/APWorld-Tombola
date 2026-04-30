@@ -17,6 +17,7 @@ class APTombolaWorld(World):
     """
 
     game = "AP Tombola"
+    genver = 2
 
     web = web_world.APTombolaWebWorld()
 
@@ -30,7 +31,6 @@ class APTombolaWorld(World):
 
     origin_region_name = "The Table"
 
-    cardsanity_to_lock = []
     all_cards = []
     milestones_chosen = []
 
@@ -64,22 +64,6 @@ class APTombolaWorld(World):
     def generate_early(self) -> None:
         # Forge ProgBal to 0
         self.options.progression_balancing = ProgressionBalancing(0)
-
-        # Extra clearing of the list so that the fuzzer does not shit itself
-        self.cardsanity_to_lock.clear()
-
-        to_lock = []
-
-        # Choose Cardsanity Cards to lock
-        if self.options.cardsanity:
-            count = self.options.cardsanity
-            t_cards = [i for i in range(1,7)]
-            self.random.shuffle(t_cards)
-
-            while (count > 0):
-                to_lock.append(t_cards.pop())
-                count -= 1
-            self.cardsanity_to_lock = to_lock
 
         # Add Starting Hints if needed
 
@@ -131,6 +115,7 @@ class APTombolaWorld(World):
 
     def fill_slot_data(self) -> dict[str, Any]:
         to_send = {}
+        to_send["Genver"] = self.genver
         to_send["Cards"] = self.all_cards
 
         to_send["All Milestones"] = locations.create_all_milestone_score_locations()
@@ -139,9 +124,6 @@ class APTombolaWorld(World):
         to_send["All Total Count Milestones"] = milestonelist.total_counts # these 2 i have to do to also get the "targets"
 
         to_send["Milestones Chosen"] = self.milestones_chosen
-
-        if self.options.cardsanity:
-            to_send["Cards Locked"] = self.cardsanity_to_lock
 
         to_send.update(self.options.as_dict("tombola_victory_count","milestone_victory_count","cardsanity"))
 

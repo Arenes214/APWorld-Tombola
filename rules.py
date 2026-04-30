@@ -66,7 +66,7 @@ def set_all_entrance_rules(world: APTombolaWorld) -> None:
     if world.options.cardsanity:
         # Get entrance
         # set_rule(entrance, lamba: the rule)
-        for card in world.cardsanity_to_lock:
+        for card in range (1,7):
             entrance = world.get_entrance(f"Look at Card {card}")
             set_rule(entrance, lambda state, card_l=card: state.has(f"Card {card_l} Unlock", world.player))
 
@@ -157,7 +157,7 @@ def set_all_regular_location_rules(world: APTombolaWorld, all_cards) -> None:
 
     # Set cardsanity unlock rules if they exist
     if world.options.cardsanity:
-        for card in world.cardsanity_to_lock:
+        for card in range(1,7):
             location = world.get_location(f"Card {card} Unlocked")
 
             # Set item rule
@@ -286,7 +286,10 @@ def set_completion_condition (world: APTombolaWorld) -> None:
     set_rule(milestone_count_reached_loc, lambda state, c=milestone_goal_count: state.count("Milestone Achieved", world.player) >= c)
 
     # Set Goal condition
-    world.multiworld.completion_condition[world.player] = lambda state: state.count("Victory Token", world.player) >= 2
+    all_requirements = world.get_location("EVENT: All Goal Requirements Reached")
+    set_rule(all_requirements, lambda state: state.count("Victory Token", world.player) >= 2 ) # TODO HARDCODED
+
+    world.multiworld.completion_condition[world.player] = lambda state: state.has("SLOT GOALED", world.player)
 
 
 

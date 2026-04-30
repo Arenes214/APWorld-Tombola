@@ -173,11 +173,10 @@ def create_regular_locations(world: APTombolaWorld) -> None: # ALSO CREATES CARD
         loc = get_location_names_with_ids([key])
         regions[region_index].add_locations(loc, APTombolaLocation)
 
-    # Create Cardsanity Unlock locations if they need to, in the starting region
-    if world.options.cardsanity:
-        for card in world.cardsanity_to_lock:
-            loc = get_location_names_with_ids([f"Card {card} Unlocked"])
-            regions[0].add_locations(loc, APTombolaLocation)
+    # Create Cardsanity Unlock locations in the starting region
+    for card in range(1,7):
+        loc = get_location_names_with_ids([f"Card {card} Unlocked"])
+        regions[0].add_locations(loc, APTombolaLocation)
 
 def create_rowsanity_locations(world: APTombolaWorld) -> None:
     # Yes the first part is duplicated code from the regular locations
@@ -246,6 +245,9 @@ def create_events(world: APTombolaWorld) -> None:
     # Create "Goal requirement fullfilled" location
     starting_region.add_event("EVENT: Tombola Count Requirement Reached", "Victory Token", location_type=APTombolaLocation, item_type=items.APTombolaItem)
     starting_region.add_event("EVENT: Milestone Count Requirement Reached", "Victory Token", location_type=APTombolaLocation, item_type=items.APTombolaItem)
+
+    # Create "GOAL ACHIEVED" location
+    starting_region.add_event("EVENT: All Goal Requirements Reached","SLOT GOALED", location_type=APTombolaLocation, item_type=items.APTombolaItem)
 
 
 
