@@ -58,6 +58,9 @@ def set_all_rules(world: APTombolaWorld) -> None:
     if world.options.rowsanity:
         set_all_rowsanity_rules(world, all_cards)
 
+    if world.options.marksanity:
+        set_all_marksanity_rules(world)
+
 
     set_completion_condition(world)
 
@@ -162,8 +165,6 @@ def set_all_regular_location_rules(world: APTombolaWorld, all_cards) -> None:
         # Set location rule
         set_rule(location, lambda state, card_l=card: state.has(f"Card {card_l} Unlock", world.player))
 
-
-
 def set_all_rowsanity_rules(world: APTombolaWorld, all_cards) -> None:
     # Yes this is duplicated code
     for loc_name, loc_id in locations.create_all_rowsanity_score_locations().items():
@@ -205,7 +206,6 @@ def set_all_rowsanity_rules(world: APTombolaWorld, all_cards) -> None:
                 case _:
                     score_type_int = int(score_type)
                     set_rule(location, lambda state, actual_rows_l=actual_rows, n=score_type_int, dis=score_discriminator-1: state.has_from_list(actual_rows_l[dis], world.player, n))
-
 
 def set_all_milestone_rules(world: APTombolaWorld, all_cards):
     all_scores = ["Ambo","Terno","Quaterna","Cinquina","Decina","Tombola"]
@@ -263,6 +263,16 @@ def set_all_milestone_rules(world: APTombolaWorld, all_cards):
                 else:
                     set_rule(location, lambda state, target_l=target: state.aptombola_even_count[world.player] >= target_l)
                     set_rule(event_location, lambda state, target_l=target: state.aptombola_even_count[world.player] >= target_l)
+
+def set_all_marksanity_rules(world: APTombolaWorld):
+    for loc_name, loc_id in locations.create_all_marksanity_score_locations().items():
+        location = world.get_location(loc_name)
+        set_anti_meta_rule(world, location)
+
+        number = loc_id - 80000
+        set_rule(location, lambda n=number: state.has(itemlist.combine_number_name(n, itemlist.numbers[n][1]), world.player))
+
+
 
 def set_anti_meta_rule(world: APTombolaWorld, location: APTombolaLocation):
     if location.item_rule is Location.item_rule: # empty rule
