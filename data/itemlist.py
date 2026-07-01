@@ -99,19 +99,42 @@ fillers = [
     [1002, "Painfully Average Christmas Present"],
     [1003, "Oggetto in Italiano"],
     [1004, "Broken Number"],
-    [1005, "an item name that, despite not being intended to be longer than that one item with a ridiculously long name, is nevertheless pointlessly long so that all game clients must be able to handle items with such profusely articulate names."],
-    [1006, "half-eaten Plate"],
-    [1007, "kid screaming about a Nintendo 64 or something"],
+    [1005, "Item name that, despite not being intended to be longer than that one item with a ridiculously long name also known as The adventures of clef, is nevertheless pointlessly long so that all game clients must be able to handle items with such profusely articulate names."],
+    [1006, "Half-eaten Plate"],
+    [1007, "Kid screaming about a Nintendo 64 or something"],
     [1008, ":mhammer:"],
-    [1009, "rejected filler item name"],
-    [1010, "merc request"],
-    [1011, "reminder to go play Multiarchi"],
-    [1012, "way over the top Fireworks Show for New Year's"],
+    [1009, "Rejected filler item name"],
+    [1010, "Merc request"],
+    [1011, "Reminder to go play Multiarchi"],
+    [1012, "Way over the top Fireworks Show for New Year's"],
     [1013, "Pandoro"],
     [1014, "Panettone"],
-    [1015, "particularly terrible Cinepanettone (...not like one *could* be good)"],
+    [1015, "Particularly terrible Cinepanettone (...not like one *could* be good)"],
     [1016, "Christmas Card from your uncle"],
     [1017, "50€"],
+    [1018, "1e30 Zimbabwean Dollars"],
+    [1019, "Definitive Proof that Melia Antiqua is Best Girl"],
+    [1020, "Trans Rights"],
+    [1021, "Trans Wrongs"],
+    [1022, "Xenoblade Chronicles: Definitive Edition - Nintendo Switch 2 Edition"],
+    [1023, "Graphics Card from 15 years ago"],
+    [1024, "Progression Item"],
+    [1025, "Framerate Issues"],
+    [1026, "1 on a D6"],
+    [1027, "2 on a D6"],
+    [1028, "3 on a D6"],
+    [1029, "4 on a D6"],
+    [1030, "5 on a D6"],
+    [1031, "6 on a D6"],
+    [1032, "Hype Overload over Xenoblade Genesis being announced"],
+    [1033, "Retain. Apply 7 Poison."],
+    [1034, "Sette di Denari"],
+    [1035, "Due di Bastoni"],
+    [1036, "Pixel Drawing of Yachty on a Tank"],
+    [1037, "PTSD from Satisfy the Bucket 14"],
+    [1038, "Pentakill"],
+    [1039, "Misconfigured YAML"],
+    [1040, "Double the Filler and give it to the next person"]
 ]
 
 usefuls = [
@@ -123,9 +146,7 @@ usefuls = [
 traps = [
     [301, "Blindness Trap"],
     [302, "Lock Trap"]
-
 ]
-
 
 unlocks = [
     [101, "Card 1 Unlock"],

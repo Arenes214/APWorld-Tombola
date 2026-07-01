@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from BaseClasses import CollectionState, ItemClassification, MultiWorld
+from BaseClasses import CollectionState, ItemClassification, MultiWorld, Location
 from worlds.AutoWorld import LogicMixin
 from worlds.generic.Rules import add_rule, set_rule
 
@@ -63,12 +63,9 @@ def set_all_rules(world: APTombolaWorld) -> None:
 
 
 def set_all_entrance_rules(world: APTombolaWorld) -> None:
-    if world.options.cardsanity:
-        # Get entrance
-        # set_rule(entrance, lamba: the rule)
-        for card in range (1,7):
-            entrance = world.get_entrance(f"Look at Card {card}")
-            set_rule(entrance, lambda state, card_l=card: state.has(f"Card {card_l} Unlock", world.player))
+    for card in range (1,7):
+        entrance = world.get_entrance(f"Look at Card {card}")
+        set_rule(entrance, lambda state, card_l=card: state.has(f"Card {card_l} Unlock", world.player))
 
     return
 
@@ -155,16 +152,15 @@ def set_all_regular_location_rules(world: APTombolaWorld, all_cards) -> None:
                                                   or state.has_from_list(actual_rows_l[2], world.player, n)),
                         )
 
-    # Set cardsanity unlock rules if they exist
-    if world.options.cardsanity:
-        for card in range(1,7):
-            location = world.get_location(f"Card {card} Unlocked")
+    # Set  unlock rules
+    for card in range(1,7):
+        location = world.get_location(f"Card {card} Unlocked")
 
-            # Set item rule
-            set_anti_meta_rule(world, location)
+        # Set item rule
+        set_anti_meta_rule(world, location)
 
-            # Set location rule
-            set_rule(location, lambda state, card_l=card: state.has(f"Card {card_l} Unlock", world.player))
+        # Set location rule
+        set_rule(location, lambda state, card_l=card: state.has(f"Card {card_l} Unlock", world.player))
 
 
 
@@ -269,10 +265,16 @@ def set_all_milestone_rules(world: APTombolaWorld, all_cards):
                     set_rule(event_location, lambda state, target_l=target: state.aptombola_even_count[world.player] >= target_l)
 
 def set_anti_meta_rule(world: APTombolaWorld, location: APTombolaLocation):
+    if location.item_rule is Location.item_rule: # empty rule
         if world.options.prevent_other_meta_game_items:
-            location.item_rule = lambda item: (not (item.game == "AP Tombola" and item.classification == ItemClassification.progression) and item.game != "APBingo")
+        location.item_rule = lambda item: (not (item.game == "AP Tombola" and item.classification == ItemClassification.progression) and item.game != "APBingo")
         else:
-            location.item_rule = lambda item: (not (item.game == "AP Tombola" and item.classification == ItemClassification.progression))
+        location.item_rule = lambda item: (not (item.game == "AP Tombola" and item.classification == ItemClassification.progression))
+    else:
+        if world.options.prevent_other_meta_game_items:
+        location.item_rule = lambda item, old_rule=location.item_rule: (not (item.game == "AP Tombola" and item.classification == ItemClassification.progression) and item.game != "APBingo") and old_rule(item)
+        else:
+        location.item_rule = lambda item,old_rule=location.item_rule: (not (item.game == "AP Tombola" and item.classification == ItemClassification.progression)) and old_rule(item)
 
 def set_completion_condition (world: APTombolaWorld) -> None:
 
