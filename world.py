@@ -146,6 +146,7 @@ class APTombolaWorld(World):
 
         print(f"DEBUG stripped: {all_cards_stripped}")
 
+        # Regular
         for loc_name, loc_id in locations.create_all_regular_card_score_locations().items():
             loc_id_str = str(loc_id)
             card_id = int(loc_id_str[0]) # ID is 1-indexed
@@ -154,14 +155,59 @@ class APTombolaWorld(World):
             hint_string = ""
             match score_type:
                 case 6:
-                    hint_string = f"Get ALL Numbers in any two of the following rows: {card}"
+                    hint_string = f"Unlock Card {card_id} and Get ALL Numbers in any two of the following rows: {card}"
                 case 7:
-                    hint_string = f"Get ALL Numbers in ALL of the following rows: {card}"
+                    hint_string = f"Unlock Card {card_id} and Get ALL Numbers in ALL of the following rows: {card}"
                 case _:
-                    hint_string = f"Get {score_type} Numbers in any one of the following rows: {card}"
+                    hint_string = f"Unlock Card {card_id} and Get {score_type} Numbers in any one of the following rows: {card}"
             working_data[loc_id] = hint_string
 
+        # Milestones
+        for milestone_name, milestone_id in self.milestones_chosen:
+            milestone_id_str = str(milestone_id)
+            score_type = int(milestone_id_str[1])
+            hint_string = ""
 
+            match score_type:
+                case 1:
+                    collect_type = int(milestone_id_str[2])
+                    collect_count = int(milestone_id_str[3])
+                    collect_strings = ["Ambo","Terno","Quaterna","Cinquina"]
+
+                    match collect_type:
+                        case 7:
+                            hint_string = f"Score a Tombola in {collect_count} Cards (Getting ALL Numbers in ALL rows of a Card)"
+                        case 6:
+                            hint_string = f"Score a Decina in {collect_count} Cards (Getting ALL Numbers in two out of three rows of a Card)"
+                        case _:
+                            hint_string = f"Score a {collect_strings[collect_type-2]} in {collect_count} Cards (Getting {collect_type} Numbers in any one row of a Card)"
+
+                case 2:
+                    numbers_list = []
+                    for canditate in milestonelist.collections:
+                        if canditate[1] == milestone_id:
+                            numbers_list = canditate[2]
+                            break
+                    hint_string = f"Obtain ALL of the following numbers: {numbers_list}"
+
+                case 3:
+                    total_count = 0
+                    for canditate in milestonelist.total_counts:
+                        if canditate[1] == milestone_id:
+                            total_count = canditate[2]
+                            break
+                    hint_string = f"Get the Sum of all Numbers received to {total_count} or greater"
+
+                case 4:
+                    even_or_odd = int(milestone_id_str[2])
+                    if even_or_odd % 2 == 0: # Even
+                        hint_string = f"Obtain {(int(milestone_id_str[3])*10+int(milestone_id_str[4]))} even Numbers"
+                    else:
+                        hint_string = f"Obtain {(int(milestone_id_str[3])*10+int(milestone_id_str[4]))} odd Numbers"
+
+            working_data[milestone_id] = hint_string
+
+        # Actually apply the hint extensions
         hint_data[self.player] = working_data
 
 
