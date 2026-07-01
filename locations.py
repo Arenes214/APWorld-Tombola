@@ -36,6 +36,7 @@ def all_locations_to_id():
     complete_list.update(create_all_cardsanity_unlock_locations())
     complete_list.update(create_all_rowsanity_score_locations())
     complete_list.update(create_all_milestone_score_locations())
+    complete_list.update(create_all_marksanity_score_locations())
 
     return complete_list
 
@@ -72,7 +73,6 @@ def create_all_cardsanity_unlock_locations():
 
     return the_list
 
-
 def create_all_rowsanity_score_locations():
     # differentiators:
     # 0 - Row 1
@@ -93,6 +93,14 @@ def create_all_rowsanity_score_locations():
             the_list[f"Card {card+1} Rowsanity - Row {row+1} Quaterna Reward"] = (10000*(card+1))+4000+100+(10*(row+1))+1
             the_list[f"Card {card+1} Rowsanity - Row {row+1} Cinquina Reward"] = (10000*(card+1))+5000+100+(10*(row+1))+1
             the_list[f"Card {card+1} Rowsanity - Rows {row+1} & {decina_pal} Decina Reward"] = (10000*(card+1))+6000+100+(10*(row+1))+1
+    return the_list
+
+# For Marksanity, Locations id are Format 800xx, with xx being the number
+
+def create_all_marksanity_score_locations():
+    the_list = {}
+    for i in range(1,91):
+        the_list[f"Marksanity - {i}" = 80000 + i]
     return the_list
 
 
@@ -155,6 +163,9 @@ def create_all_locations(world: APTombolaWorld) -> None:
     if world.options.rowsanity:
         create_rowsanity_locations(world)
 
+    if world.options.marksanity:
+        create_marksanity_locations(world)
+
 def create_regular_locations(world: APTombolaWorld) -> None: # ALSO CREATES CARDSANITY LOCKS
     # Get the regions
     # Card 1 is index **1** since index 0 will be the starting regions
@@ -173,7 +184,7 @@ def create_regular_locations(world: APTombolaWorld) -> None: # ALSO CREATES CARD
         loc = get_location_names_with_ids([key])
         regions[region_index].add_locations(loc, APTombolaLocation)
 
-    # Create Cardsanity Unlock locations in the starting region
+    # Create Unlock locations in the starting region
     for card in range(1,7):
         loc = get_location_names_with_ids([f"Card {card} Unlocked"])
         regions[0].add_locations(loc, APTombolaLocation)
@@ -208,6 +219,21 @@ def create_milestone_locations(world: APTombolaWorld, chosen) -> None:
         loc = get_location_names_with_ids([milestone[0]])
         milestone_region.add_locations(loc, APTombolaLocation)
 
+def create_marksanity_locations(world: APTombolaWorld) -> None:
+    regions = []
+    for i in range(1,7):
+        region = world.get_region(f"Card {i}")
+
+    score_locations = create_all_marksanity_score_locations()
+    # Loop through all of the cards
+    # for each number found, create the location and put it in that card region
+    # so that the access is tied to the card unlock
+    for region_id, card in enumerate(world.all_cards):
+        for row in card:
+            for column in row:
+                if not card[row][column] == 0:
+                    loc = get_location_names_with_ids([f"Marksanity - {card[row][column]}"])
+                    regions[region_id].add_locations(loc, APTombolaLocation)
 
 
 def create_events(world: APTombolaWorld) -> None:
