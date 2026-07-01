@@ -134,7 +134,13 @@ fillers = [
     [1037, "PTSD from Satisfy the Bucket 14"],
     [1038, "Pentakill"],
     [1039, "Misconfigured YAML"],
-    [1040, "Double the Filler and give it to the next person"]
+    [1040, "Double the Filler and give it to the next person"],
+    [1041, "Error 404 - Item Not Found"],
+    [1042, "Natural 20"],
+    [1043, "Natural 1"],
+    [1044, "23 on a D20"],
+    [1045, "Stinky German Wizard"],
+    [1046, "https://www.youtube.com/watch?v=dQw4w9WgXcQ"]
 ]
 
 usefuls = [

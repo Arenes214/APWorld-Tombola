@@ -59,8 +59,6 @@ class APTombolaWorld(World):
         return change
 
 
-
-
     def generate_early(self) -> None:
         # Forge ProgBal to 0
         self.options.progression_balancing = ProgressionBalancing(0)
@@ -104,14 +102,18 @@ class APTombolaWorld(World):
     def get_filler_item_name(self) -> str:
         return items.get_random_filler_item_name(self)
 
-    # There may be data that the game client will need to modify the behavior of the game.
-    # This is what slot_data exists for. Upon every client connection, the slot's slot_data is sent to the client.
-    # slot_data is just a dictionary using basic types, that will be converted to json when sent to the client.
-    #def fill_slot_data(self) -> Mapping[str, Any]:
-        # If you need access to the player's chosen options on the client side, there is a helper for that.
-        #return self.options.as_dict(
-        #    "hard_mode", "hammer", "extra_starting_chest", "confetti_explosiveness", "player_sprite"
-        #)
+    def write_spoiler_header(self, spoiler_handle:TextIO):
+        spoiler_handle.write(f"\nTombola Cards:\n")
+        for card_id, card in enumerate(self.all_cards):
+            spoiler_handle.writelines(f"Card {card_id+1}:")
+            for row in card:
+                elements = []
+                for n in row:
+                    if not n == 0:
+                        elements.append(n)
+                spoiler_handle.writelines(f"{elements} ")
+            spoiler_handle.write("\n")
+
 
     def fill_slot_data(self) -> dict[str, Any]:
         to_send = {}
@@ -129,8 +131,42 @@ class APTombolaWorld(World):
 
         return to_send
 
-    def create_spoiler(self, file:TextIO):
-        file.write("PROVAPROVAPROVA")
+    def extend_hint_information(self, hint_data):
+        working_data = {}
+        all_cards_stripped = []
+        for card in self.all_cards:
+            card_stripped = []
+            for row in card:
+                row_stripped = []
+                for n in row:
+                    if not n == 0:
+                        row_stripped.append(n)
+                card_stripped.append(row_stripped)
+            all_cards_stripped.append(card_stripped)
+
+        print(f"DEBUG stripped: {all_cards_stripped}")
+
+        for loc_name, loc_id in locations.create_all_regular_card_score_locations().items():
+            loc_id_str = str(loc_id)
+            card_id = int(loc_id_str[0]) # ID is 1-indexed
+            score_type = int(loc_id_str[1])
+            card = all_cards_stripped[card_id-1]
+            hint_string = ""
+            match score_type:
+                case 6:
+                    hint_string = f"Get ALL Numbers in any two of the following rows: {card}"
+                case 7:
+                    hint_string = f"Get ALL Numbers in ALL of the following rows: {card}"
+                case _:
+                    hint_string = f"Get {score_type} Numbers in any one of the following rows: {card}"
+            working_data[loc_id] = hint_string
+
+
+        hint_data[self.player] = working_data
+
+
+
+
 
 
 
