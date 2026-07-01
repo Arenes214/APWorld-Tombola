@@ -100,7 +100,7 @@ def create_all_rowsanity_score_locations():
 def create_all_marksanity_score_locations():
     the_list = {}
     for i in range(1,91):
-        the_list[f"Marksanity - {i}" = 80000 + i]
+        the_list[f"Marksanity - {i}"] = 80000 + i
     return the_list
 
 
@@ -222,17 +222,20 @@ def create_milestone_locations(world: APTombolaWorld, chosen) -> None:
 def create_marksanity_locations(world: APTombolaWorld) -> None:
     regions = []
     for i in range(1,7):
-        region = world.get_region(f"Card {i}")
+        regions.append(world.get_region(f"Card {i}"))
 
     score_locations = create_all_marksanity_score_locations()
     # Loop through all of the cards
     # for each number found, create the location and put it in that card region
     # so that the access is tied to the card unlock
     for region_id, card in enumerate(world.all_cards):
-        for row in card:
-            for column in row:
-                if not card[row][column] == 0:
-                    loc = get_location_names_with_ids([f"Marksanity - {card[row][column]}"])
+        print(f"card is {card}")
+        for row_id, row in enumerate(card):
+            print(f"row is {row}")
+            for column_id, col in enumerate(row):
+                print(f"column is {col}")
+                if not card[row_id][column_id] == 0:
+                    loc = get_location_names_with_ids([f"Marksanity - {card[row_id][column_id]}"])
                     regions[region_id].add_locations(loc, APTombolaLocation)
 
 

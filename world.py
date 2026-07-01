@@ -1,5 +1,5 @@
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, TextIO
 
 from worlds.AutoWorld import World
 from Options import ProgressionBalancing
@@ -17,7 +17,7 @@ class APTombolaWorld(World):
     """
 
     game = "AP Tombola"
-    genver = 2
+    genver = 3
 
     web = web_world.APTombolaWebWorld()
 
@@ -129,7 +129,8 @@ class APTombolaWorld(World):
 
         return to_send
 
-
+    def create_spoiler(self, file:TextIO):
+        file.write("PROVAPROVAPROVA")
 
 
 

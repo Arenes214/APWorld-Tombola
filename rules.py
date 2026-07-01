@@ -270,21 +270,21 @@ def set_all_marksanity_rules(world: APTombolaWorld):
         set_anti_meta_rule(world, location)
 
         number = loc_id - 80000
-        set_rule(location, lambda n=number: state.has(itemlist.combine_number_name(n, itemlist.numbers[n][1]), world.player))
+        set_rule(location, lambda state, n=number: state.has(itemlist.combine_number_name(n, itemlist.numbers[n-1][1]), world.player))
 
 
 
 def set_anti_meta_rule(world: APTombolaWorld, location: APTombolaLocation):
     if location.item_rule is Location.item_rule: # empty rule
         if world.options.prevent_other_meta_game_items:
-        location.item_rule = lambda item: (not (item.game == "AP Tombola" and item.classification == ItemClassification.progression) and item.game != "APBingo")
+            location.item_rule = lambda item: (not (item.game == "AP Tombola" and item.classification == ItemClassification.progression) and item.game != "APBingo")
         else:
-        location.item_rule = lambda item: (not (item.game == "AP Tombola" and item.classification == ItemClassification.progression))
+            location.item_rule = lambda item: (not (item.game == "AP Tombola" and item.classification == ItemClassification.progression))
     else:
         if world.options.prevent_other_meta_game_items:
-        location.item_rule = lambda item, old_rule=location.item_rule: (not (item.game == "AP Tombola" and item.classification == ItemClassification.progression) and item.game != "APBingo") and old_rule(item)
+            location.item_rule = lambda item, old_rule=location.item_rule: (not (item.game == "AP Tombola" and item.classification == ItemClassification.progression) and item.game != "APBingo") and old_rule(item)
         else:
-        location.item_rule = lambda item,old_rule=location.item_rule: (not (item.game == "AP Tombola" and item.classification == ItemClassification.progression)) and old_rule(item)
+            location.item_rule = lambda item,old_rule=location.item_rule: (not (item.game == "AP Tombola" and item.classification == ItemClassification.progression)) and old_rule(item)
 
 def set_completion_condition (world: APTombolaWorld) -> None:
 

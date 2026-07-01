@@ -98,45 +98,43 @@ def create_all_items(world: APTombolaWorld) -> None:
         to_pool = world.create_item(item)
         itempool.append(to_pool)
 
+    # Starting Counts (aka extra from Milestones)
+    count_free_mark = 1
+    count_free_lochint = 2
+    count_shield = 2
+    count_traps = 4
+    count_fillers = 9
 
-    # Item counts of non-fillers are manually specified
-    # MILESTONES
-    for i in range(1): # Yes it seems dumb, i just have it like this in case i change my mind and wanna add more
+    if world.options.rowsanity:
+        count_free_mark += 2
+        count_free_lochint += 4
+        count_shield += 3
+        count_traps += 10
+        count_fillers += 71
+
+    if world.options.marksanity:
+        count_free_mark += 2
+        count_free_lochint += 4
+        count_shield += 3
+        count_traps += 10
+        count_fillers += 71
+
+    for i in range(count_free_mark):
         to_pool = world.create_item("Free Mark!!!")
         itempool.append(to_pool)
-    for i in range(2):
+    for i in range(count_free_lochint):
         to_pool = world.create_item("Free Location Hint")
         itempool.append(to_pool)
-    for i in range(2):
+    for i in range(count_shield):
         to_pool = world.create_item("Anti-Trap Shield")
         itempool.append(to_pool)
-    for i in range(4):
+    for i in range(count_traps):
         to_pool = create_random_trap(world)
         itempool.append(to_pool)
-    for i in range(9):
+    for i in range(count_fillers):
         item = get_random_filler_item_name(world)
         to_pool = world.create_item(item)
         itempool.append(to_pool)
-
-
-    # ROWSANITY
-    if world.options.rowsanity:
-        for i in range(2): # Free Mark
-            to_pool = world.create_item("Free Mark!!!")
-            itempool.append(to_pool)
-        for i in range(4): # Free Location Hint
-            to_pool = world.create_item("Free Location Hint")
-            itempool.append(to_pool)
-        for i in range(3): # Anti-Trap Shield
-            to_pool = world.create_item("Anti-Trap Shield")
-            itempool.append(to_pool)
-        for i in range(10): # Traps
-            to_pool = create_random_trap(world)
-            itempool.append(to_pool)
-        for i in range(71): # Filler
-            item = get_random_filler_item_name(world)
-            to_pool = world.create_item(item)
-            itempool.append(to_pool)
 
     world.multiworld.itempool += itempool
 
