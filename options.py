@@ -29,7 +29,7 @@ class PreventOtherMetaGameItems(DefaultOnToggle):
     """
     When enabled, prevents locations in the game from having items from other Meta-Games, such as APBingo.
 
-    Note: Progression items from AP Tombola slots will never be placed in an AP Tombola slot, even if this option is disabled.
+    Note: Progression Items from AP Tombola slots will never be placed in an AP Tombola slot, even if this option is disabled.
     (Default: Enabled)
     """
     display_name = "Prevent Other Meta-Game Items"
@@ -43,9 +43,8 @@ class AutomaticNumberHints(DefaultOnToggle):
 
 class Cardsanity(Range):
     """
-    If Cardsanity is set to a value other than zero, than that many Cards will be locked.
-    A locked Card may be unlocked by receiving its corresponding "Card Unlock" item.
-    Unlocking a Card sends an item to the multiworld.
+    If Cardsanity is set to a value other than zero, than that many Cards' Unlocks will be sent to the Multiworld,
+    instead of being automatically given at the start of the game.
     (Default is 0)
     """
     display_name = "Cardsanity"
@@ -60,9 +59,18 @@ class Rowsanity(Toggle):
     If Rowsanity is enabled, for each row of a Card and for each score type other than Tombola,
     a location will be created that will require that specific row's numbers to be checked.
     In the case of a Decina, each combination of 2 rows will be a location.
+    Note: Despite being classified as a Sanity Option, this option enhances the Tombola Experience and is thus recommended.
     (Default: Disabled)
     """
     display_name = "Rowsanity"
+
+class Marksanity(Toggle):
+    """
+    If Marksanity is enabled a location is created for each number.
+    Marking a number will check the corresponding location.
+    (Default: Disabled)
+    """
+    display_name = "Marksanity"
 
 class TombolaStartHints(StartHints):
     """
@@ -79,6 +87,7 @@ class APTombolaOptions(PerGameCommonOptions):
     automatic_number_hints: AutomaticNumberHints
     cardsanity: Cardsanity
     rowsanity: Rowsanity
+    marksanity: Marksanity
     start_hints: TombolaStartHints
 
 
@@ -88,7 +97,7 @@ option_groups = [
 
     OptionGroup("Misc Options", [PreventOtherMetaGameItems, AutomaticNumberHints],),
 
-    OptionGroup("Sanity Options", [Cardsanity, Rowsanity],),
+    OptionGroup("Sanity Options", [Cardsanity, Rowsanity, Marksanity],),
 
     OptionGroup("Item & Location Options", [TombolaStartHints],)
 ]
