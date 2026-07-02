@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from Options import Choice, OptionGroup, PerGameCommonOptions, Range, Toggle, DefaultOnToggle, StartHints
+from Options import Choice, OptionGroup, PerGameCommonOptions, Range, Toggle, Choice, DefaultOnToggle, StartHints
 
 # Options here
 class TombolaVictoryCount(Range):
@@ -24,6 +24,27 @@ class MilestoneVictoryCount(Range):
     range_end = 18
 
     default = 9
+
+class CardGenerationCriteria(Choice):
+    """
+    Determines what Card generation type will be used.
+    - Classic: The normal Card generation criteria. the following Tombola rules will be followed:
+      (1-9 in first column, 10-19 in second column, ..., 80-90 in last column)
+      (All columns will have at least one number)
+      (Numbers in the same column are ordered in ascending order)
+
+    - Order: Numbers will be distributed into card in order.
+      (1 in Card 1, 2 in Card 2, ..., 6 in Card 6, 7 in Card 1, 8 in Card 2, ...)
+
+    - Chaos: Numbers will not respect the Tombola rules respected by the Classic option.
+      (e.g. 1 may appear in any column, 54 may appear before 22 in a column)
+
+    """
+    display_name = "Card Generation Criteria"
+    default = 0
+    option_classic = 0
+    option_order = 1
+    option_chaos = 2
 
 class PreventOtherMetaGameItems(DefaultOnToggle):
     """
@@ -83,6 +104,7 @@ class TombolaStartHints(StartHints):
 class APTombolaOptions(PerGameCommonOptions):
     tombola_victory_count: TombolaVictoryCount
     milestone_victory_count: MilestoneVictoryCount
+    card_generation_criteria: CardGenerationCriteria
     prevent_other_meta_game_items: PreventOtherMetaGameItems
     automatic_number_hints: AutomaticNumberHints
     cardsanity: Cardsanity
@@ -95,7 +117,7 @@ class APTombolaOptions(PerGameCommonOptions):
 option_groups = [
     OptionGroup("Goal Options", [TombolaVictoryCount, MilestoneVictoryCount],),
 
-    OptionGroup("Misc Options", [PreventOtherMetaGameItems, AutomaticNumberHints],),
+    OptionGroup("Misc Options", [CardGenerationCriteria, PreventOtherMetaGameItems, AutomaticNumberHints],),
 
     OptionGroup("Sanity Options", [Cardsanity, Rowsanity, Marksanity],),
 

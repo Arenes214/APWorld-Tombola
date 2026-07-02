@@ -152,7 +152,7 @@ def create_all_location_groups():
 
     groups_card = [set() for _ in range(6)]
 
-    # Regular Locations
+    # - Regular Locations
     groups_regular = [set() for _ in range(6)]
 
     for loc_name, loc_id in create_all_regular_card_score_locations().items():
@@ -163,26 +163,37 @@ def create_all_location_groups():
         groups_card[card_id].add(loc_name)
         groups_regular[score_type].add(loc_name)
 
-    location_groups["Regular Ambo Locations"] = groups_regular[0]
-    location_groups["Regular Terno Locations"] = groups_regular[1]
-    location_groups["Regular Quaterna Locations"] = groups_regular[2]
-    location_groups["Regular Cinquina Locations"] = groups_regular[3]
-    location_groups["Regular Decina Locations"] = groups_regular[4]
-    location_groups["Regular Tombola Locations"] = groups_regular[5]
+    # - Rowsanity Locations
+    groups_rowsanity = [set() for _ in range(6)] # yes, a group for tombola is created even if it doesn't make sense for rowsanity, it makes the union above easier
 
-    for i in range(6):
-        location_groups[f"Card {i+1} Locations"] = groups_card[i]
-
-    # Rowsanity Locations
-    groups_rowsanity = [set() for _ in range(6)]
-
-    for loc_name, loc_id in create_all_rowsanity_score_locations().items()
+    for loc_name, loc_id in create_all_rowsanity_score_locations().items():
         loc_id_str = str(loc_id)
         card_id = int(loc_id_str[0])-1
         score_type = int(loc_id_str[1])-2
 
         groups_card[card_id].add(loc_name)
         groups_rowsanity[score_type].add(loc_name)
+
+    for i in range(6):
+        location_groups[f"Regular {score_strings[i]} Locations"] = groups_regular[i]
+        if not i == 5: # ok but at least don't create a "rowsanity tombola" group lmao
+            location_groups[f"Rowsanity {score_strings[i]} Locations"] = groups_rowsanity[i]
+        location_groups[f"All {score_strings[i]} Locations"] = groups_regular[i].union(groups_rowsanity[i])
+
+    for i in range(6):
+        location_groups[f"Card {i+1} Locations"] = groups_card[i]
+
+    # - Milestone Locations
+    group_milestone = set()
+    for loc_name, _ in create_all_milestone_score_locations().items():
+        group_milestone.add(loc_name)
+    location_groups["Milestone Locations"] = group_milestone
+
+    # Marksanity Locations
+    group_marksanity = set()
+    for loc_name, _ in create_all_marksanity_score_locations().items():
+        group_marksanity.add(loc_name)
+    location_groups["Marksanity Locations"] = group_marksanity
 
     return location_groups
 
@@ -269,11 +280,8 @@ def create_marksanity_locations(world: APTombolaWorld) -> None:
     # for each number found, create the location and put it in that card region
     # so that the access is tied to the card unlock
     for region_id, card in enumerate(world.all_cards):
-        print(f"card is {card}")
         for row_id, row in enumerate(card):
-            print(f"row is {row}")
             for column_id, col in enumerate(row):
-                print(f"column is {col}")
                 if not card[row_id][column_id] == 0:
                     loc = get_location_names_with_ids([f"Marksanity - {card[row_id][column_id]}"])
                     regions[region_id].add_locations(loc, APTombolaLocation)

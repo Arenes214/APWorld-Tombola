@@ -145,7 +145,6 @@ class APTombolaWorld(World):
                 card_stripped.append(row_stripped)
             all_cards_stripped.append(card_stripped)
 
-        print(f"DEBUG stripped: {all_cards_stripped}")
 
         # Regular
         for loc_name, loc_id in locations.create_all_regular_card_score_locations().items():
@@ -218,7 +217,6 @@ class APTombolaWorld(World):
                 card = all_cards_stripped[card_id-1]
                 hint_string = ""
 
-                print(f"loc_id_str is {loc_id_str}, meaning that [3] is {loc_id_str[3]}")
                 match score_type:
                     case 6:
                         row_1 = int(loc_id_str[3])

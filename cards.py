@@ -9,76 +9,108 @@ from collections import defaultdict
 
 
 def generate_cards(world: APTombolaWorld):
-    # Create and shuffle numbers
-    sheet_columns = {
-        0: list(range(1,10)),
-        1: list(range(10,20)),
-        2: list(range(20,30)),
-        3: list(range(30, 40)),
-        4: list(range(40, 50)),
-        5: list(range(50, 60)),
-        6: list(range(60, 70)),
-        7: list(range(70, 80)),
-        8: list(range(80, 91)), # Last columns includes 90
-    }
 
-    for i in sheet_columns:
-        world.random.shuffle(sheet_columns[i])
-
-    # Get the numbers for each card
     all_card_numbers = []
 
-    # For each card get the first 9 numbers from each column to follow the "at least one per column" rule
-    for card in range(6):
-        card_numbers = []
+    # Part 1 - get each card's numbers
+    if world.options.card_generation_criteria == "classic":
+        # Create and shuffle numbers
+        sheet_columns = {
+            0: list(range(1,10)),
+            1: list(range(10,20)),
+            2: list(range(20,30)),
+            3: list(range(30, 40)),
+            4: list(range(40, 50)),
+            5: list(range(50, 60)),
+            6: list(range(60, 70)),
+            7: list(range(70, 80)),
+            8: list(range(80, 91)), # Last columns includes 90
+        }
 
-        for col in range(9):
-            n = sheet_columns[col].pop()
-            card_numbers.append((col, n))
-            # Column count is not needed here since it will be 1 for each column
-        all_card_numbers.append(card_numbers)
+        for i in sheet_columns:
+            world.random.shuffle(sheet_columns[i])
 
-    # Now we can take the remaining numbers to have 15 per Card
+        # For each card get the first 9 numbers from each column to follow the "at least one per column" rule
+        for card in range(6):
+            card_numbers = []
 
-    force_first = 1
-
-    for card_numbers in all_card_numbers:
-        col_count = defaultdict(lambda:1) # Create the column count at 1 since there is guaranteed exact 1 per column
-
-        # Avoid infinite loop by taking a number from the last column at start
-        if force_first:
-            n = sheet_columns[8].pop()
-            card_numbers.append((col, n))
-            col_count[8] += 1
-            force_first = 0
-
-        while (len(card_numbers) < 15):
-            # Only take from columns that have 3 or more numbers, unless all of them don't have 3
-            # This avoids an infinite loop
-            takeable_col = []
             for col in range(9):
-                if len(sheet_columns[col]) >= 3:
-                    takeable_col.append(col)
-
-            # At this point if takeable_col is empty, all columns are 2 or lower
-            if not takeable_col:
-                for i in range(9):
-                    takeable_col.append(i)
-
-
-            # Avoid recalculation the above, only retry this part
-            while (True):
-                col = world.random.choice(takeable_col)
-
-                if col_count[col] >=3: # Don't take if we already have 3 in column
-                    continue
-                if not sheet_columns[col]: # And seriously don't try to take from an empty column
-                    continue
-
                 n = sheet_columns[col].pop()
                 card_numbers.append((col, n))
-                col_count[col] += 1
-                break
+                # Column count is not needed here since it will be 1 for each column
+            all_card_numbers.append(card_numbers)
+
+        # Now we can take the remaining numbers to have 15 per Card
+
+        force_first = 1
+
+        for card_numbers in all_card_numbers:
+            col_count = defaultdict(lambda:1) # Create the column count at 1 since there is guaranteed exact 1 per column
+
+            # Avoid infinite loop by taking a number from the last column at start
+            if force_first:
+                n = sheet_columns[8].pop()
+                card_numbers.append((col, n))
+                col_count[8] += 1
+                force_first = 0
+
+            while (len(card_numbers) < 15):
+                # Only take from columns that have 3 or more numbers, unless all of them don't have 3
+                # This avoids an infinite loop
+                takeable_col = []
+                for col in range(9):
+                    if len(sheet_columns[col]) >= 3:
+                        takeable_col.append(col)
+
+                # At this point if takeable_col is empty, all columns are 2 or lower
+                if not takeable_col:
+                    for i in range(9):
+                        takeable_col.append(i)
+
+
+                # Avoid recalculation the above, only retry this part
+                while (True):
+                    col = world.random.choice(takeable_col)
+
+                    if col_count[col] >=3: # Don't take if we already have 3 in column
+                        continue
+                    if not sheet_columns[col]: # And seriously don't try to take from an empty column
+                        continue
+
+                    n = sheet_columns[col].pop()
+                    card_numbers.append((col, n))
+                    col_count[col] += 1
+                    break
+
+    elif world.options.card_generation_criteria == "order":
+        all_card_numbers = [list() for _ in range(6)]
+        for i in range(90):
+            col = -1
+            if i == 89: # Actually 90
+                col = 8
+            else:
+                col = int((i+1) / 10)
+            all_card_numbers[i % 6].append((col,i+1))
+
+    elif world.options.card_generation_criteria == "chaos":
+        col_counts = list(list(0 for _ in range(9)) for _ in range(6))
+        card_len = list(0 for _ in range(6))
+        numbers = list(i for i in range(1,91))
+        world.random.shuffle(numbers)
+
+        for card_id in range(6):
+            card = []
+            while card_len[card_id] < 15:
+                n = numbers.pop()
+                col_canditate = world.random.randint(0,8)
+                while col_counts[card_id][col_canditate] > 2:
+                    col_canditate = world.random.randint(0,8)
+
+                col_counts[card_id][col_canditate] += 1
+                card.append((col_canditate, n))
+                card_len[card_id] += 1
+            all_card_numbers.append(card)
+
 
     # Now that i have all of the cards' numbers, create the cards
     cards = []
@@ -96,7 +128,7 @@ def generate_cards(world: APTombolaWorld):
                     row_count[row] += 1
                     break
 
-        # Then move them randomly in the columns until all of the rows are 5
+        # Then move them "randomly" in the columns until all of the rows are 5
         while (max(row_count) > 5):
             row_high = row_count.index(max(row_count))
             row_low = row_count.index(min(row_count))
@@ -117,15 +149,16 @@ def generate_cards(world: APTombolaWorld):
             row_count[row_low] += 1
 
         # After poplulating them, order the columns
-        for col in range (9):
-            col_sorted = [card[row][col] for row in range(3) if card[row][col] != 0]
-            col_sorted.sort()
+        if world.options.card_generation_criteria == "classic" or world.options.card_generation_criteria == "order":
+            for col in range (9):
+                col_sorted = [card[row][col] for row in range(3) if card[row][col] != 0]
+                col_sorted.sort()
 
-            i = 0 # index of col_sorted basically
-            for row in range(3):
-                if card[row][col] != 0:
-                    card[row][col] = col_sorted[i]
-                    i += 1
+                i = 0 # index of col_sorted basically
+                for row in range(3):
+                    if card[row][col] != 0:
+                        card[row][col] = col_sorted[i]
+                        i += 1
         # After doing everything add the card to cards
         cards.append(card)
 
