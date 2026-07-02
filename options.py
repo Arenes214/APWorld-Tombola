@@ -6,7 +6,7 @@ from Options import Choice, OptionGroup, PerGameCommonOptions, Range, Toggle, Ch
 class TombolaVictoryCount(Range):
     """
     Sets the amount of Tombola needed to goal the game.
-    (Default is 3)
+    (Default: 3)
     """
     display_name = "Tombola Victory Count"
     range_start = 1
@@ -17,7 +17,7 @@ class TombolaVictoryCount(Range):
 class MilestoneVictoryCount(Range):
     """
     Sets the amount of Milestones needed to goal the game.
-    (Default is 9)
+    (Default: 9)
     """
     display_name = "Milestone Victory Count"
     range_start = 1
@@ -38,6 +38,7 @@ class CardGenerationCriteria(Choice):
 
     - Chaos: Numbers will not respect the Tombola rules respected by the Classic option.
       (e.g. 1 may appear in any column, 54 may appear before 22 in a column)
+    (Default: Classic)
 
     """
     display_name = "Card Generation Criteria"
@@ -66,7 +67,7 @@ class Cardsanity(Range):
     """
     If Cardsanity is set to a value other than zero, than that many Cards' Unlocks will be sent to the Multiworld,
     instead of being automatically given at the start of the game.
-    (Default is 0)
+    (Default: 0)
     """
     display_name = "Cardsanity"
 
@@ -74,6 +75,13 @@ class Cardsanity(Range):
     range_end = 6
 
     default = 0
+
+class AdditionalCardUnlocks(DefaultOnToggle):
+    """
+    If Cardsanity and this option are enabled, an additional copy of "Card X Unlock" is created for each locked Card.
+    (Default: Enabled)
+    """
+    display_name = "Additional Card Unlocks"
 
 class Rowsanity(Toggle):
     """
@@ -108,6 +116,7 @@ class APTombolaOptions(PerGameCommonOptions):
     prevent_other_meta_game_items: PreventOtherMetaGameItems
     automatic_number_hints: AutomaticNumberHints
     cardsanity: Cardsanity
+    additional_card_unlocks: AdditionalCardUnlocks
     rowsanity: Rowsanity
     marksanity: Marksanity
     start_hints: TombolaStartHints
@@ -119,7 +128,7 @@ option_groups = [
 
     OptionGroup("Misc Options", [CardGenerationCriteria, PreventOtherMetaGameItems, AutomaticNumberHints],),
 
-    OptionGroup("Sanity Options", [Cardsanity, Rowsanity, Marksanity],),
+    OptionGroup("Sanity Options", [Cardsanity, AdditionalCardUnlocks, Rowsanity, Marksanity],),
 
     OptionGroup("Item & Location Options", [TombolaStartHints],)
 ]

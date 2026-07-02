@@ -77,6 +77,13 @@ def create_item_with_correct_classification(world: APTombolaWorld, name: str) ->
 def create_all_items(world: APTombolaWorld) -> None:
     itempool: list[Item] = []
 
+    # Starting Counts (aka extra from Milestones)
+    count_free_mark = 1
+    count_free_lochint = 2
+    count_shield = 2
+    count_traps = 4
+    count_fillers = 9
+
     for item in itemlist.numbers:
         to_pool = world.create_item(itemlist.combine_number_name(item[0],item[1]))
         itempool.append(to_pool)
@@ -90,6 +97,10 @@ def create_all_items(world: APTombolaWorld) -> None:
         c = locks.pop()
         to_pool = world.create_item(f"Card {c} Unlock")
         itempool.append(to_pool)
+        if world.options.additional_card_unlocks:
+            to_pool = world.create_item(f"Card {c} Unlock") # Makes sense that i have to create a copy
+            itempool.append(to_pool)
+            count_fillers -= 1
 
     for c in locks:
         to_precollect = world.create_item(f"Card {c} Unlock")
@@ -97,13 +108,6 @@ def create_all_items(world: APTombolaWorld) -> None:
         item = get_random_filler_item_name(world)
         to_pool = world.create_item(item)
         itempool.append(to_pool)
-
-    # Starting Counts (aka extra from Milestones)
-    count_free_mark = 1
-    count_free_lochint = 2
-    count_shield = 2
-    count_traps = 4
-    count_fillers = 9
 
     if world.options.rowsanity:
         count_free_mark += 2
