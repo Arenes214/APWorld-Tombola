@@ -28,6 +28,7 @@ class APTombolaWorld(World):
     item_name_to_id = items.ITEM_NAME_TO_ID
 
     item_name_groups = items.create_all_item_groups()
+    location_name_groups = locations.create_all_location_groups()
 
     origin_region_name = "The Table"
 
@@ -155,11 +156,12 @@ class APTombolaWorld(World):
             hint_string = ""
             match score_type:
                 case 6:
-                    hint_string = f"Unlock Card {card_id} and Get ALL Numbers in any two of the following rows: {card}"
+                    hint_string = f"Unlock Card {card_id} and obtain ALL Numbers in any two of the following rows: {card}"
                 case 7:
-                    hint_string = f"Unlock Card {card_id} and Get ALL Numbers in ALL of the following rows: {card}"
+                    hint_string = f"Unlock Card {card_id} and obtain ALL Numbers in ALL of the following rows: {card}"
                 case _:
-                    hint_string = f"Unlock Card {card_id} and Get {score_type} Numbers in any one of the following rows: {card}"
+                    hint_string = f"Unlock Card {card_id} and obtain {score_type} Numbers in any one of the following rows: {card}"
+
             working_data[loc_id] = hint_string
 
         # Milestones
@@ -206,6 +208,43 @@ class APTombolaWorld(World):
                         hint_string = f"Obtain {(int(milestone_id_str[3])*10+int(milestone_id_str[4]))} odd Numbers"
 
             working_data[milestone_id] = hint_string
+
+        # Rowsanity
+        if self.options.rowsanity:
+            for loc_name, loc_id in locations.create_all_rowsanity_score_locations().items():
+                loc_id_str = str(loc_id)
+                card_id = int(loc_id_str[0]) # ID is 1-indexed
+                score_type = int(loc_id_str[1])
+                card = all_cards_stripped[card_id-1]
+                hint_string = ""
+
+                print(f"loc_id_str is {loc_id_str}, meaning that [3] is {loc_id_str[3]}")
+                match score_type:
+                    case 6:
+                        row_1 = int(loc_id_str[3])
+                        row_2 = -1
+                        if row_1 == 3: # Row 3
+                            row_2 = 0
+                        else:
+                            row_2 = row_1 + 1
+                        sanity_rows = []
+                        sanity_rows.append(card[row_1-1])
+                        sanity_rows.append(card[row_2-1])
+                        hint_string = f"Unlock Card {card_id} and obtain ALL Numbers in both of the following rows: {sanity_rows}"
+
+                    case _:
+                        sanity_row = card[int(loc_id_str[3])-1]
+                        hint_string = f"Unlock Card {card_id} and obtain {score_type} Numbers in the following row: {sanity_row}"
+
+                working_data[loc_id] = hint_string
+
+        # Marksanity
+        if self.options.marksanity:
+            for loc_name, loc_id in locations.create_all_marksanity_score_locations().items():
+                loc_id_str = str(loc_id)
+                number = int(loc_id_str[3])*10+int(loc_id_str[4])
+                hint_string = f"Obtain the Number {number}"
+                working_data[loc_id] = hint_string
 
         # Actually apply the hint extensions
         hint_data[self.player] = working_data

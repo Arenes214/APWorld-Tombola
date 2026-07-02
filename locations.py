@@ -75,9 +75,9 @@ def create_all_cardsanity_unlock_locations():
 
 def create_all_rowsanity_score_locations():
     # differentiators:
-    # 0 - Row 1
-    # 1 - Row 2
-    # 2 - Row 3
+    # 1 - Row 1
+    # 2 - Row 2
+    # 3 - Row 3
     # For Decina, the differentiator indicates its row plus the one after (wrapping around for Row 3)
 
     the_list = {}
@@ -145,6 +145,46 @@ def create_all_milestone_score_locations():
 
     return the_list
 
+
+def create_all_location_groups():
+    location_groups = {}
+    score_strings = ["Ambo","Terno","Quaterna","Cinquina","Decina","Tombola"]
+
+    groups_card = [set() for _ in range(6)]
+
+    # Regular Locations
+    groups_regular = [set() for _ in range(6)]
+
+    for loc_name, loc_id in create_all_regular_card_score_locations().items():
+        loc_id_str = str(loc_id)
+        card_id = int(loc_id_str[0])-1
+        score_type = int(loc_id_str[1])-2
+
+        groups_card[card_id].add(loc_name)
+        groups_regular[score_type].add(loc_name)
+
+    location_groups["Regular Ambo Locations"] = groups_regular[0]
+    location_groups["Regular Terno Locations"] = groups_regular[1]
+    location_groups["Regular Quaterna Locations"] = groups_regular[2]
+    location_groups["Regular Cinquina Locations"] = groups_regular[3]
+    location_groups["Regular Decina Locations"] = groups_regular[4]
+    location_groups["Regular Tombola Locations"] = groups_regular[5]
+
+    for i in range(6):
+        location_groups[f"Card {i+1} Locations"] = groups_card[i]
+
+    # Rowsanity Locations
+    groups_rowsanity = [set() for _ in range(6)]
+
+    for loc_name, loc_id in create_all_rowsanity_score_locations().items()
+        loc_id_str = str(loc_id)
+        card_id = int(loc_id_str[0])-1
+        score_type = int(loc_id_str[1])-2
+
+        groups_card[card_id].add(loc_name)
+        groups_rowsanity[score_type].add(loc_name)
+
+    return location_groups
 
 # Create the list with ids to mimic APQuest behaviour
 LOCATION_NAME_TO_ID = all_locations_to_id()

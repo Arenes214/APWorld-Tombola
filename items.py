@@ -163,10 +163,20 @@ def create_all_item_groups():
 
     for item in itemlist.unlocks:
         group_unlocks.add(item[1])
-
     item_groups["Unlocks"] = group_unlocks
 
-    # TODO Create filler list when filler will actually exist
+    # - Usefuls Group
+    group_usefuls = set()
+
+    for item in itemlist.usefuls:
+        group_usefuls.add(item[1])
+    item_groups["Useful Items"] = group_usefuls
+
+    # - Traps Group
+    group_traps = set()
+    for item in itemlist.traps:
+        group_traps.add(item[1])
+    item_groups["Traps"] = group_traps
 
     return item_groups
 
