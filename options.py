@@ -83,13 +83,13 @@ class AdditionalCardUnlocks(DefaultOnToggle):
     """
     display_name = "Additional Card Unlocks"
 
-class Rowsanity(Toggle):
+class Rowsanity(DefaultOnToggle):
     """
     If Rowsanity is enabled, for each row of a Card and for each score type other than Tombola,
     a location will be created that will require that specific row's numbers to be checked.
     In the case of a Decina, each combination of 2 rows will be a location.
     Note: Despite being classified as a Sanity Option, this option enhances the Tombola Experience and is thus recommended.
-    (Default: Disabled)
+    (Default: Enabled)
     """
     display_name = "Rowsanity"
 
