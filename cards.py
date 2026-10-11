@@ -162,4 +162,5 @@ def generate_cards(world: APTombolaWorld):
         # After doing everything add the card to cards
         cards.append(card)
 
+
     return cards
