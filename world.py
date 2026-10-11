@@ -17,7 +17,7 @@ class APTombolaWorld(World):
     """
 
     game = "AP Tombola"
-    genver = 3
+    genver = 4
 
     web = web_world.APTombolaWebWorld()
 
@@ -79,12 +79,23 @@ class APTombolaWorld(World):
             self.options.start_hints = TombolaStartHints(to_hint)
 
         # Create the Cards
-        self.all_cards.clear()
-        self.all_cards = cards.generate_cards(self)
 
-        # Choose Milestones
-        self.milestones_chosen.clear()
-        self.milestones_chosen = locations.choose_milestone_locations(self)
+        if hasattr(self.multiworld, "generation_is_fake"):
+            if hasattr(self.multiworld, "re_gen_passthrough"):
+                slot_data = self.multiworld.re_gen_passthrough["AP Tombola"]
+                self.all_cards = slot_data["Cards"]
+                self.milestones_chosen = slot_data["Milestones Chosen"]
+                self.options.tombola_victory_count = slot_data["tombola_victory_count"]
+                self.options.milestone_victory_count = slot_data["milestone_victory_count"]
+                self.options.rowsanity = slot_data["rowsanity"]
+                self.options.marksanity = slot_data["marksanity"]
+        else:
+           self.all_cards.clear()
+           self.all_cards = cards.generate_cards(self)
+
+           # Choose Milestones
+           self.milestones_chosen.clear()
+           self.milestones_chosen = locations.choose_milestone_locations(self)
 
 
     def create_regions(self) -> None:
@@ -128,7 +139,7 @@ class APTombolaWorld(World):
 
         to_send["Milestones Chosen"] = self.milestones_chosen
 
-        to_send.update(self.options.as_dict("tombola_victory_count","milestone_victory_count","cardsanity"))
+        to_send.update(self.options.as_dict("tombola_victory_count","milestone_victory_count","rowsanity","marksanity"))
 
         return to_send
 
@@ -248,6 +259,12 @@ class APTombolaWorld(World):
         hint_data[self.player] = working_data
 
 
+    #UT Stuff
+    @staticmethod
+    def interpret_slot_data(slot_data: dict[str,Any]) -> dict[str,Any]:
+            return slot_data
+        
+    ut_can_gen_without_yaml = True
 
 
 
