@@ -107,6 +107,18 @@ class TombolaStartHints(StartHints):
     """
     default = []
 
+
+class DeprioritizeNumbers(DefaultOnToggle):
+    """
+    When enabled, will set the "deprioritize" flag on all Numbers.
+    This means that if other slots have set locations to be Priority Locations,
+    Numbers from this slot will not land on said Priority Locations
+    (Unless *all* other progression items have already been placed on Priority Locations)
+
+    (Default: Enabled)
+    """
+    display_name = "Deprioritize Numbers"
+
 # Define Dataclass
 @dataclass
 class APTombolaOptions(PerGameCommonOptions):
@@ -119,6 +131,7 @@ class APTombolaOptions(PerGameCommonOptions):
     additional_card_unlocks: AdditionalCardUnlocks
     rowsanity: Rowsanity
     marksanity: Marksanity
+    deprioritize_numbers: DeprioritizeNumbers
     start_hints: TombolaStartHints
 
 
@@ -126,9 +139,9 @@ class APTombolaOptions(PerGameCommonOptions):
 option_groups = [
     OptionGroup("Goal Options", [TombolaVictoryCount, MilestoneVictoryCount],),
 
-    OptionGroup("Misc Options", [CardGenerationCriteria, PreventOtherMetaGameItems, AutomaticNumberHints],),
-
     OptionGroup("Sanity Options", [Cardsanity, AdditionalCardUnlocks, Rowsanity, Marksanity],),
+
+    OptionGroup("Misc Options", [CardGenerationCriteria, DeprioritizeNumbers, PreventOtherMetaGameItems, AutomaticNumberHints],),
 
     OptionGroup("Item & Location Options", [TombolaStartHints],)
 ]

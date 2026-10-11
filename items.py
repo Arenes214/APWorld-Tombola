@@ -86,6 +86,8 @@ def create_all_items(world: APTombolaWorld) -> None:
 
     for item in itemlist.numbers:
         to_pool = world.create_item(itemlist.combine_number_name(item[0],item[1]))
+        if world.options.deprioritize_numbers:
+            to_pool.classification = ItemClassification.progression_deprioritized_skip_balancing
         itempool.append(to_pool)
 
     locks = [1,2,3,4,5,6]
