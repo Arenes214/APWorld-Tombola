@@ -154,6 +154,7 @@ def create_all_location_groups():
 
     # - Regular Locations
     groups_regular = [set() for _ in range(6)]
+    all_regular_group = set()
 
     for loc_name, loc_id in create_all_regular_card_score_locations().items():
         loc_id_str = str(loc_id)
@@ -162,6 +163,7 @@ def create_all_location_groups():
 
         groups_card[card_id].add(loc_name)
         groups_regular[score_type].add(loc_name)
+        all_regular_group.add(loc_name)
 
     # - Rowsanity Locations
     groups_rowsanity = [set() for _ in range(6)] # yes, a group for tombola is created even if it doesn't make sense for rowsanity, it makes the union above easier
@@ -176,7 +178,9 @@ def create_all_location_groups():
         groups_rowsanity[score_type].add(loc_name)
         all_rowsanity_group.add(loc_name)
 
+        location_groups["Regular Locations"] = all_regular_group
         location_groups["Rowsanity Locations"] = all_rowsanity_group
+
     for i in range(6):
         location_groups[f"Regular {score_strings[i]} Locations"] = groups_regular[i]
         if not i == 5: # ok but at least don't create a "rowsanity tombola" group lmao
@@ -197,6 +201,12 @@ def create_all_location_groups():
     for loc_name, _ in create_all_marksanity_score_locations().items():
         group_marksanity.add(loc_name)
     location_groups["Marksanity Locations"] = group_marksanity
+
+    # - Unlocks Locations
+    group_unlock = set()
+    for i in range(1,7):
+        group_unlock.add(f"Card {i} Unlocked")
+    location_groups["Unlock Locations"] = group_unlock
 
     return location_groups
 

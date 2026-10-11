@@ -222,7 +222,7 @@ class APTombolaWorld(World):
                         row_1 = int(loc_id_str[3])
                         row_2 = -1
                         if row_1 == 3: # Row 3
-                            row_2 = 0
+                            row_2 = 1
                         else:
                             row_2 = row_1 + 1
                         sanity_rows = []
