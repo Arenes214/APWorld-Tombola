@@ -361,7 +361,7 @@ class TMBCountAtLeast(Rule["APTombolaWorld"], game="AP Tombola"):
             
             if state is None:
                 color = "Yellow"
-                greater_string = "Greater "
+                greater_string = "needs to be Equal or Greater "
             else:
                 greater: bool
                 
@@ -379,10 +379,10 @@ class TMBCountAtLeast(Rule["APTombolaWorld"], game="AP Tombola"):
                 
                 if greater:
                     color = "green"
-                    greater_string = "Greater "
+                    greater_string = "Equal or Greater "
                 else:
                     color = "salmon"
-                    greater_string = "Not Greater "
+                    greater_string = "Not Equal or Greater "
             
             return [
                 {"type":"text", "text":start},

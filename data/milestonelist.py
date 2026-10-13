@@ -7,7 +7,10 @@ collections = [
     ["Milestone - The Greatest Expeditions", 72006, [33,60]],
     ["Milestone - Dad's Choice", 72007, [11]],
     ["Milestone - Go Play Multiarchi", 72008, [5]],
-    ["Milestone - Archer-y", 72009, [26]]
+    ["Milestone - Archer-y", 72009, [26]],
+    ["Milestone - Leap Year", 72010, [29,2]],
+    ["Milestone - Developer Choice :)", 72011,[28]],
+    ["Milestone - Nein", 72012, [9]]
 ]
 
 total_counts = [
@@ -18,4 +21,6 @@ total_counts = [
     ["Milestone - Golden Count", 73005, 789],
     ["Milestone - Not so Mysterious Choice", 73006, 1024],
     ["Milestone - Also try High Roller!", 73007, 432],
+    ["Milestone - Tombola's Birth Year", 73008, 1374],
+
 ]
