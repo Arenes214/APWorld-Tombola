@@ -7,6 +7,7 @@ collections = [
     ["Milestone - The Greatest Expeditions", 72006, [33,60]],
     ["Milestone - Dad's Choice", 72007, [11]],
     ["Milestone - Go Play Multiarchi", 72008, [5]],
+    ["Milestone - Archer-y", 72009, [26]]
 ]
 
 total_counts = [

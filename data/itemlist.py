@@ -140,7 +140,9 @@ fillers = [
     [1043, "Natural 1"],
     [1044, "23 on a D20"],
     [1045, "Stinky German Wizard"],
-    [1046, "https://www.youtube.com/watch?v=dQw4w9WgXcQ"]
+    [1046, "https://www.youtube.com/watch?v=dQw4w9WgXcQ"],
+    [1047, "Grass"],
+    [1048, "Unimplemented Feature"]
 ]
 
 usefuls = [
