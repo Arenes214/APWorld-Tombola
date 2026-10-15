@@ -146,14 +146,29 @@ fillers = [
 ]
 
 usefuls = [
-    [201, "Free Mark!!!"],
+    [201, "Free Mark"],
     [202, "Free Location Hint"],
-    [203, "Anti-Trap Shield"]
+    [203, "Anti-Trap Shield"],
+    [210, "Free Mark!!!"],
+    [211, "Free Mark!!"],
+    [212, "Free Mark!"],
+    [220, "Free Location Hint!!!"],
+    [221, "Free Location Hint!!"],
+    [222, "Free Location Hint!"],
+    [230, "Anti-Trap Shield!!!"],
+    [231, "Anti-Trap Shield!!"],
+    [232, "Anti-Trap Shield!"],
 ]
 
 traps = [
     [301, "Blindness Trap"],
-    [302, "Lock Trap"]
+    [302, "Lock Trap"],
+    [310, "Blindness Trap!!!"],
+    [311, "Blindness Trap!!"],
+    [312, "Blindness Trap!"],
+    [320, "Lock Trap!!!"],
+    [321, "Lock Trap!!"],
+    [322, "Lock Trap!"],
 ]
 
 unlocks = [

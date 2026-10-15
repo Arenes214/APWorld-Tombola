@@ -1,15 +1,16 @@
 from collections.abc import Mapping
+from collections import defaultdict, Counter
 from typing import Any, TextIO
 
 from worlds.AutoWorld import World
-from Options import ProgressionBalancing
+from Options import ProgressionBalancing, OptionError
 
 from . import items, locations, regions, rules, cards, web_world
 from .options import TombolaStartHints
 from . import options as aptombola_options
 from .data import itemlist, milestonelist
 
-from BaseClasses import CollectionState, Item
+from BaseClasses import CollectionState, Item, MultiWorld
 
 class APTombolaWorld(World):
     """
@@ -35,6 +36,14 @@ class APTombolaWorld(World):
     all_cards = []
     milestones_chosen = []
 
+    # Easy Links
+    cards_linked = []
+    force_extra_unlocks = False
+    special_free_mark = defaultdict(bool)
+    special_free_lochints = defaultdict(bool)
+    special_shieldtrap = defaultdict(bool)
+    trap_rng_seed = -1
+
     def collect(self, state: CollectionState, item: Item) -> bool:
         change = super().collect(state, item)
         if item.code is not None:
@@ -58,7 +67,6 @@ class APTombolaWorld(World):
                 else:
                     state.aptombola_odd_count[self.player] -= 1
         return change
-
 
     def generate_early(self) -> None:
         # Forge ProgBal to 0
@@ -97,6 +105,271 @@ class APTombolaWorld(World):
            self.milestones_chosen.clear()
            self.milestones_chosen = locations.choose_milestone_locations(self)
 
+    @classmethod
+    def stage_generate_early(cls, multiworld: MultiWorld):
+        # Easy Item Links
+        
+        problems = ["TombolaLink",
+        "TombolaUnlockA","TombolaUnlockB","TombolaUnlockC",
+        "TombolaMarksA","TombolaMarksB","TombolaMarksC",
+        "TombolaHintsA","TombolaHintsB","TombolaHintsC",
+        "TombolaShieldsA","TombolaShieldsB","TombolaShieldsC",
+        "TombolaTrapsA","TombolaTrapsB","TombolaTrapsC",
+        ]
+
+        for link in multiworld.groups.values():
+            if link["name"] in problems:
+                raise OptionError(f"\n\nDetected Link Name \"{link["name"]}\" manually defined by players {link["players"]}"
+                "\nPlease remove this Link from item_links and use the Easy Item Links option instead.\n")
+        
+        for (_,world) in multiworld.worlds.items():
+            if world.player_name in problems:
+                raise OptionError(f"\n\nDetected Player Name \"{world.player_name}\" that would interfere with Tombola Item Links."
+                "\nPlease change the player name.\n")
+
+        def add_group_fix_state(group_name: str, game, players: set, multiworld: MultiWorld, state: CollectionState, linked_items: set, replacement_items: dict):
+            pass
+            group_id, group = multiworld.add_group(
+                group_name,
+                game,
+                players,
+            )
+
+            group["item_pool"] = linked_items
+
+            group["replacement_items"] = replacement_items
+            group["link_replacement"] = True
+
+            group["local_items"] = set()
+            group["non_local_items"] = set()
+
+            # Fix State
+            state.prog_items.setdefault(group_id, Counter())
+            state.reachable_regions.setdefault(group_id, set())
+            state.blocked_connections.setdefault(group_id, set())
+            state.stale.setdefault(group_id, True)
+
+        state = multiworld.state
+
+        filler_replace = set()
+        for (_,name) in itemlist.fillers:
+            filler_replace.add(name)
+
+        link_request = defaultdict(list)
+        link_options = ["Numbers","Unlocks","Free Marks","Free Location Hints","Traps & Shields"]
+
+        for tombola in multiworld.get_game_worlds(cls.game):
+            for option in link_options:
+                if option in tombola.options.easy_item_links:
+                    if option == "Unlocks" and tombola.options.cardsanity == 0:
+                        continue
+                    link_request[option].append(tombola)
+            
+        if len(link_request["Numbers"]) >= 2:
+            
+            numbers = set()
+            for (idx, name) in itemlist.numbers:
+                numbers.add(itemlist.combine_number_name(idx,name))
+
+            players_ids = set()
+            for tombola_world in link_request["Numbers"]:
+                players_ids.add(tombola_world.player)
+
+            replacements = dict()
+            for player_id in players_ids:
+                pick = multiworld.random.choice(list(filler_replace))
+                replacements[player_id] = pick
+            
+            add_group_fix_state("TombolaLink", cls.game, players_ids, multiworld, state, numbers, replacements)
+              
+        if len(link_request["Unlocks"]) >= 2:
+            
+            # we need to create more than 1 group, so first prepare all of the data
+            # especially since groups can have different players due to amount of cards locked per player
+
+            # world id -> amount of cards to lock
+            lock_length = defaultdict(int)
+            link_players = defaultdict(list)
+            force_double = False
+
+            for tombola in link_request["Unlocks"]:
+                lock_length[tombola.player] = int(tombola.options.cardsanity)
+                if tombola.options.additional_card_unlocks:
+                    force_double = True
+            
+            # Can assume at least 1 will be linked, checked for Cardsanity 0 at the start
+
+            card_id = [1,2,3,4,5,6]
+            has_linked = defaultdict(list) # player -> cards linked
+
+            still_link = True
+            while still_link:
+                card_picked = multiworld.random.choice(card_id)
+                card_id.remove(card_picked)
+
+                for player_id in lock_length.keys():
+                    if lock_length[player_id] > 0:
+                        link_players[card_picked].append(player_id)
+                        has_linked[player_id].append(card_picked)
+                        lock_length[player_id] -= 1
+                
+                count_unlinked = 0 # Numbers of players that still have cards to lock
+                for (k,player_count) in lock_length.items():
+                    if player_count > 0:
+                        count_unlinked += 1
+                
+                if count_unlinked < 2:
+                    still_link = False
+                
+                for key in has_linked.keys():
+                    multiworld.worlds[key].cards_linked = has_linked[key]
+                    if force_double:
+                        multiworld.worlds[key].force_extra_unlocks = True
+            
+            #Create link
+            for (card_id,player_list) in link_players.items():
+
+                replacements = dict()
+                for player_id in players_ids:
+                    pick = multiworld.random.choice(list(filler_replace))
+                    replacements[player_id] = pick
+                
+                add_group_fix_state(f"TombolaUnlock{card_id}", cls.game, set(player_list), multiworld, state, [f"Card {card_id} Unlock"], replacements)
+
+        if len(link_request["Free Marks"]) >= 2:
+
+            # Players can have differing amount of Free Marks
+            # In order to link them all, 3 different free mark items are defined
+            # Calculate the groups from biggest to lowest
+
+            tier_players = defaultdict(list)
+            special_free_mark_per_player = defaultdict(lambda: defaultdict(list))
+
+            for tombola in link_request["Free Marks"]:
+                tier = 1
+                tier_players[tier].append(tombola.player)
+                if tombola.options.rowsanity:
+                    tier += 1
+                    tier_players[tier].append(tombola.player)
+                if tombola.options.marksanity:
+                    tier += 1
+                    tier_players[tier].append(tombola.player)
+            
+            item_name = [0,"Free Mark!!!","Free Mark!!","Free Mark!"]
+            name_letter = [0,"A","B","C"]
+            string_id = 1
+             
+            for tier in tier_players.keys():
+                if len(tier_players[tier]) <= 1:
+                    continue
+                for player_id in tier_players[tier]:
+                    special_free_mark_per_player[player_id][tier] = True
+
+                replacements = dict()
+                for player_id in tier_players[tier]:
+                    pick = multiworld.random.choice(list(filler_replace))
+                    replacements[player_id] = pick
+
+                add_group_fix_state("TombolaMarks"+name_letter[string_id], cls.game, set(tier_players[tier]),
+                    multiworld, state, [item_name[string_id]], replacements)
+                string_id += 1
+
+                for player_id in special_free_mark_per_player.keys():
+                    multiworld.worlds[player_id].special_free_mark = special_free_mark_per_player[player_id]
+
+        if len(link_request["Free Location Hints"]) >= 2:
+            # Same idea as Free Marks
+            # Different Tiers to account for differing counts
+
+            tier_players = defaultdict(list)
+            special_free_lochint_per_player = defaultdict(lambda: defaultdict(list))
+
+            for tombola in link_request["Free Location Hints"]:
+                tier = 1
+                tier_players[tier].append(tombola.player)
+                if tombola.options.rowsanity:
+                    tier += 1
+                    tier_players[tier].append(tombola.player)
+                if tombola.options.marksanity:
+                    tier += 1
+                    tier_players[tier].append(tombola.player)
+
+            item_name = [0,"Free Location Hint!!!","Free Location Hint!!","Free Location Hint!"]
+            name_letter = [0,"A","B","C"]
+            string_id = 1
+
+            for tier in tier_players.keys():
+                if len(tier_players[tier]) <= 1:
+                    continue
+                for player_id in tier_players[tier]:
+                    special_free_lochint_per_player[player_id][tier] = True
+
+                replacements = dict()
+                for player_id in tier_players[tier]:
+                    pick = multiworld.random.choice(list(filler_replace))
+                    replacements[player_id] = pick
+
+                add_group_fix_state("TombolaHints"+name_letter[string_id], cls.game, set(tier_players[tier]),
+                    multiworld, state, [item_name[string_id]], replacements)
+                string_id += 1
+
+                for player_id in special_free_lochint_per_player.keys():
+                    multiworld.worlds[player_id].special_free_lochints = special_free_lochint_per_player[player_id]
+
+        if len(link_request["Traps & Shields"]) >= 2:
+
+            # Same as Free Marks
+
+            tier_players = defaultdict(list)
+            special_shieldtrap_per_player = defaultdict(lambda: defaultdict(list))
+
+            # But also we need to have seed be the same for all players
+            seed = multiworld.random.randint(1,214214214214)
+
+            for tombola in link_request["Traps & Shields"]:
+                tier = 1
+                tier_players[tier].append(tombola.player)
+                if tombola.options.rowsanity:
+                    tier += 1
+                    tier_players[tier].append(tombola.player)
+                if tombola.options.marksanity:
+                    tier += 1
+                    tier_players[tier].append(tombola.player)
+
+            item_name_shield = [0,"Anti-Trap Shield!!!","Anti-Trap Shield!!","Anti-Trap Shield!"]
+            item_name_blind  = [0,"Blindness Trap!!!","Blindness Trap!!","Blindness Trap!"]
+            item_name_lock  = [0,"Lock Trap!!!","Lock Trap!!","Lock Trap!"]
+            name_letter = [0,"A","B","C"]
+            string_id = 1
+             
+            for tier in tier_players.keys():
+                if len(tier_players[tier]) <= 1:
+                    continue
+                for player_id in tier_players[tier]:
+                    special_shieldtrap_per_player[player_id][tier] = True
+
+                replacements = dict()
+                for player_id in tier_players[tier]:
+                    pick = multiworld.random.choice(list(filler_replace))
+                    replacements[player_id] = pick
+                
+                add_group_fix_state("TombolaShields"+name_letter[string_id], cls.game, set(tier_players[tier]),
+                    multiworld, state, [item_name_shield[string_id]], replacements)
+                add_group_fix_state("TombolaTraps"+name_letter[string_id], cls.game, set(tier_players[tier]),
+                    multiworld, state, [item_name_blind[string_id],item_name_lock[string_id]], replacements)
+                string_id += 1
+            
+                for player_id in special_shieldtrap_per_player.keys():
+                    multiworld.worlds[player_id].special_shieldtrap = special_shieldtrap_per_player[player_id]
+                    multiworld.worlds[player_id].trap_rng_seed = seed
+
+                
+
+            
+
+                
+                
+
 
     def create_regions(self) -> None:
         regions.create_and_connect_regions(self)
@@ -125,7 +398,6 @@ class APTombolaWorld(World):
                         elements.append(n)
                 spoiler_handle.writelines(f"{elements} ")
             spoiler_handle.write("\n")
-
 
     def fill_slot_data(self) -> dict[str, Any]:
         to_send = {}
@@ -265,7 +537,6 @@ class APTombolaWorld(World):
             return slot_data
         
     ut_can_gen_without_yaml = True
-
 
 
 

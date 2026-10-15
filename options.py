@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from Options import Choice, OptionGroup, PerGameCommonOptions, Range, Toggle, Choice, DefaultOnToggle, StartHints
+from Options import Choice, OptionGroup, PerGameCommonOptions, Range, Toggle, Choice, DefaultOnToggle, StartHints, OptionSet
 
 # Options here
 class TombolaVictoryCount(Range):
@@ -119,6 +119,23 @@ class DeprioritizeNumbers(DefaultOnToggle):
     """
     display_name = "Deprioritize Numbers"
 
+class EasyItemLinks(OptionSet):
+    """
+    Link your items with other players that have enabled this function!
+    Add the name for each kind of item you want to link.
+    This option accounts for players having different options, thus differing amount of items,
+    automatically creating links to have the highest amount of items linked without impacting player options*
+
+    *if any linked player for Unlocks has Additional Card Unlocks enabled, all linked players will have the extra unlock
+
+    Valid Keys are: "Numbers", "Unlocks", "Free Marks", "Free Location Hints", "Traps & Shields"
+
+    (Default: None)
+    """
+    display_name = "Easy Item Links"
+    valid_keys = ["Numbers","Unlocks","Free Marks","Free Location Hints","Traps & Shields"]
+
+
 # Define Dataclass
 @dataclass
 class APTombolaOptions(PerGameCommonOptions):
@@ -133,6 +150,7 @@ class APTombolaOptions(PerGameCommonOptions):
     marksanity: Marksanity
     deprioritize_numbers: DeprioritizeNumbers
     start_hints: TombolaStartHints
+    easy_item_links: EasyItemLinks
 
 
 
@@ -141,7 +159,7 @@ option_groups = [
 
     OptionGroup("Sanity Options", [Cardsanity, AdditionalCardUnlocks, Rowsanity, Marksanity],),
 
-    OptionGroup("Misc Options", [CardGenerationCriteria, DeprioritizeNumbers, PreventOtherMetaGameItems, AutomaticNumberHints],),
+    OptionGroup("Misc Options", [EasyItemLinks, CardGenerationCriteria, DeprioritizeNumbers, PreventOtherMetaGameItems, AutomaticNumberHints],),
 
     OptionGroup("Item & Location Options", [TombolaStartHints],)
 ]

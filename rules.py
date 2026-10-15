@@ -87,7 +87,6 @@ def set_all_regular_location_rules(world: APTombolaWorld, all_cards) -> None:
         set_anti_meta_rule(world, location)
 
         # Get the type of location it is by its ID
-        # TODO This wouldn't work in a future where there are more than 9 cards
         loc_id_str = str(loc_id)
         card_id = int(loc_id_str[0]) - 1
         score_type = int(loc_id_str[1])
@@ -176,7 +175,6 @@ def set_all_rowsanity_rules(world: APTombolaWorld, all_cards) -> None:
         set_anti_meta_rule(world, location)
 
         # Get the type of location it is by its ID
-        # TODO This wouldn't work in a future where there are more than 9 cards
         loc_id_str = str(loc_id)
         card_id = int(loc_id_str[0]) - 1
         score_type = int(loc_id_str[1])

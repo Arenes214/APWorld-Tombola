@@ -276,7 +276,7 @@ def choose_milestone_locations(world: APTombolaWorld):
 
     score_count = [0,0,"Double","Triple","Quadruple","Quintuple","All of the"]
     for i in range(max(2,world.options.tombola_victory_count),7):
-            all_score_locations.remove(f"Milestone - {score_count[i]} Tombola")
+            del all_score_locations[f"Milestone - {score_count[i]} Tombola"]
 
     return world.random.sample(list(all_score_locations.items()), 18)
 

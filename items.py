@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import random
+
 from typing import TYPE_CHECKING
 
 from BaseClasses import Item, ItemClassification
@@ -93,13 +95,20 @@ def create_all_items(world: APTombolaWorld) -> None:
     locks = [1,2,3,4,5,6]
     world.random.shuffle(locks)
     to_lock = world.options.cardsanity
+    force_lock = world.cards_linked
 
     while to_lock:
         to_lock -= 1
-        c = locks.pop()
+
+        if len(force_lock):
+            c = force_lock.pop()
+            locks.remove(c)
+        else:
+            c = locks.pop()
+        
         to_pool = world.create_item(f"Card {c} Unlock")
         itempool.append(to_pool)
-        if world.options.additional_card_unlocks:
+        if world.options.additional_card_unlocks or world.force_extra_unlocks:
             to_pool = world.create_item(f"Card {c} Unlock") # Makes sense that i have to create a copy
             itempool.append(to_pool)
             count_fillers -= 1
@@ -107,9 +116,7 @@ def create_all_items(world: APTombolaWorld) -> None:
     for c in locks:
         to_precollect = world.create_item(f"Card {c} Unlock")
         world.push_precollected(to_precollect)
-        item = get_random_filler_item_name(world)
-        to_pool = world.create_item(item)
-        itempool.append(to_pool)
+        count_fillers += 1
 
     if world.options.rowsanity:
         count_free_mark += 2
@@ -125,8 +132,59 @@ def create_all_items(world: APTombolaWorld) -> None:
         count_traps += 10
         count_fillers += 71
 
+    # Easy Links
+    # Free Marks
+    mark_name = [0,"Free Mark!!!","Free Mark!!","Free Mark!"]
+    if world.special_free_mark.keys():
+        for (tier, to_do) in world.special_free_mark.items():
+            count = 2
+            if tier == 1:
+                count = 1
+            if to_do:
+                for i in range(count):
+                    count_free_mark -= 1
+                    to_pool = world.create_item(mark_name[tier])
+                    itempool.append(to_pool)
+    
+    # Free Location Hints
+    lh_name = [0,"Free Location Hint!!!","Free Location Hint!!","Free Location Hint!"]
+    if world.special_free_lochints.keys():
+        for (tier, to_do) in world.special_free_lochints.items():
+            count = 4
+            if tier == 1:
+                count = 2
+            if to_do:
+                for i in range(count):
+                    count_free_lochint -= 1
+                    to_pool = world.create_item(lh_name[tier])
+                    itempool.append(to_pool)
+    # Shields & Traps
+    shield_name = [0,"Anti-Trap Shield!!!","Anti-Trap Shield!!","Anti-Trap Shield!"]
+    blind_name = [0,"Blindness Trap!!!","Blindness Trap!!","Blindness Trap!"]
+    lock_name = [0,"Lock Trap!!!","Lock Trap!!","Lock Trap!"]
+
+    if world.special_shieldtrap.keys():
+        special_rng = random.Random(world.trap_rng_seed)
+        for (tier, to_do) in world.special_shieldtrap.items():
+            count_shield_s = 3
+            count_trap_s = 10
+            if tier == 1:
+                count_shield_s = 2
+                count_trap_s = 4
+            if to_do:
+                for i in range(count_shield_s):
+                    count_shield -= 1
+                    to_pool = world.create_item(shield_name[tier])
+                    itempool.append(to_pool)
+                
+                for i in range(count_trap_s):
+                    count_traps -= 1
+                    trap_chosen = special_rng.choice([blind_name[tier], lock_name[tier]])
+                    to_pool_trap = world.create_item(trap_chosen)
+                    itempool.append(to_pool_trap)
+
     for i in range(count_free_mark):
-        to_pool = world.create_item("Free Mark!!!")
+        to_pool = world.create_item("Free Mark")
         itempool.append(to_pool)
     for i in range(count_free_lochint):
         to_pool = world.create_item("Free Location Hint")
