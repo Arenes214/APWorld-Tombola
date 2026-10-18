@@ -20,6 +20,9 @@ class APTombolaWorld(World):
     game = "AP Tombola"
     genver = 4
 
+    # Avoid 0.1 client
+    required_client_version = (0,5,1)
+
     web = web_world.APTombolaWebWorld()
 
     options_dataclass = aptombola_options.APTombolaOptions
