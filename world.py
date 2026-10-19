@@ -122,7 +122,7 @@ class APTombolaWorld(World):
 
         for link in multiworld.groups.values():
             if link["name"] in problems:
-                raise OptionError(f"\n\nDetected Link Name \"{link["name"]}\" manually defined by players {link["players"]}"
+                raise OptionError(f"\n\nDetected Link Name \"{link["name"]}\" manually defined by players {link["players"]}."
                 "\nPlease remove this Link from item_links and use the Easy Item Links option instead.\n")
         
         for (_,world) in multiworld.worlds.items():
@@ -167,6 +167,11 @@ class APTombolaWorld(World):
                     if option == "Unlocks" and tombola.options.cardsanity == 0:
                         continue
                     link_request[option].append(tombola)
+        
+        for tombola in multiworld.get_game_worlds(cls.game):
+            if tombola.options.item_links:
+                raise OptionError(f"\n\nPlayer {multiworld.get_player_name(tombola.player)} has both Easy Item Links and normal Links defined."
+                "\nPlease remove the normal Links.")
             
         if len(link_request["Numbers"]) >= 2:
             
