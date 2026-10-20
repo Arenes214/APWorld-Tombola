@@ -238,7 +238,7 @@ class APTombolaWorld(World):
             for (card_id,player_list) in link_players.items():
 
                 replacements = dict()
-                for player_id in players_ids:
+                for player_id in player_list:
                     pick = multiworld.random.choice(list(filler_replace))
                     replacements[player_id] = pick
                 
@@ -371,12 +371,7 @@ class APTombolaWorld(World):
                     multiworld.worlds[player_id].special_shieldtrap = special_shieldtrap_per_player[player_id]
                     multiworld.worlds[player_id].trap_rng_seed = seed
 
-                
 
-            
-
-                
-                
 
 
     def create_regions(self) -> None:
