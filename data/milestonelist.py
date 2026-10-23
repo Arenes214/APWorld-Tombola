@@ -10,7 +10,8 @@ collections = [
     ["Milestone - Archer-y", 72009, [26]],
     ["Milestone - Leap Year", 72010, [29,2]],
     ["Milestone - Developer Choice :)", 72011,[28]],
-    ["Milestone - Nein", 72012, [9]]
+    ["Milestone - Nein", 72012, [9]],
+    ["Milestone - Beta Testing", 72013, [69,6,42,9,64,1]]
 ]
 
 total_counts = [
